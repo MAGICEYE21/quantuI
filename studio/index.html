@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Studio"><link rel="apple-touch-icon" href="icon.png"><script>(function(){try{var q=new URLSearchParams(location.search),m=q.get("m"),small=Math.min(innerWidth,screen.width||innerWidth)<=600,coarse=window.matchMedia&&matchMedia("(pointer:coarse)").matches;if(m==="1"||(m!=="0"&&small&&coarse)){window.QM=true;try{localStorage.setItem("quantu-studio-bd","0")}catch(e){}var c=document.documentElement.classList;c.add("qm");if(navigator.standalone===true||q.get("sa")==="1"||(window.matchMedia&&matchMedia("(display-mode:standalone)").matches))c.add("qm-sa");var v=document.querySelector("meta[name=viewport]");if(v)v.setAttribute("content","width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover");}}catch(e){}})();</script><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style id="apple">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Studio"><link rel="apple-touch-icon" href="icon.png"><script>(function(){try{var q=new URLSearchParams(location.search),m=q.get("m"),small=Math.min(innerWidth,screen.width||innerWidth)<=600,coarse=window.matchMedia&&matchMedia("(pointer:coarse)").matches;if(m==="1"||(m!=="0"&&small&&coarse)){window.QM=true;try{localStorage.setItem("quantu-studio-bd","0")}catch(e){}var c=document.documentElement.classList;c.add("qm");if(navigator.standalone===true||q.get("sa")==="1"||(window.matchMedia&&matchMedia("(display-mode:standalone)").matches))c.add("qm-sa");window.QMH=function(){var sa=c.contains("qm-sa"),big=Math.max(screen.width||0,screen.height||0),sm=Math.min(screen.width||0,screen.height||0),h=innerHeight;if(sa&&big){h=Math.max(h,innerHeight>=innerWidth?big:sm);}document.documentElement.style.setProperty("--qmvh",h+"px");return h;};window.QMH();var v=document.querySelector("meta[name=viewport]");if(v)v.setAttribute("content","width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover");}}catch(e){}})();</script><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style id="apple">
 @keyframes qlf{0%,100%{translate:0 0}50%{translate:0 var(--qlfl,-4px)}}
 @keyframes qlr{0%,100%{translate:0 0;opacity:1;scale:1 1}50%{translate:0 calc(var(--qlfl,-4px)*-.6);opacity:var(--qldim,.85);scale:1 var(--qlsq,.96)}}
 @keyframes qlp{0%,100%{opacity:1;filter:brightness(1)}50%{opacity:calc(1 - var(--qlpulse,.4)*.35);filter:brightness(calc(1 + var(--qlpulse,.4)*.12))}}
@@ -727,7 +727,7 @@ html,body{background:var(--cv) fixed!important}
 </style>
 <div class="app" dir="rtl" lang="he">
   <header class="top">
-    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">6.92</span></div>
+    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">6.93</span></div>
     <div class="seg" id="modeSeg" role="group" aria-label="מה רואים בטלפון"><button data-v="app" title="האפליקציה של נימר, כמו שהיא">האפליקציה</button><button data-v="canvas" title="רק הרקע, הכדור והבר">רקע וכדור</button></div>
     <div class="seg" id="themeSeg" role="group" aria-label="ערכה"><button data-v="light">יום</button><button data-v="dark">לילה</button></div>
     <div class="seg" id="devSeg" role="group" aria-label="תצוגה"><button data-v="frame">מסגרת</button><button data-v="full">מסך מלא</button></div>
@@ -7034,13 +7034,13 @@ three/build/three.module.js:
 <style id="qm-css">
 /* ═════════ the studio on a phone: the app fills the screen, one tray holds the editing ═════════ */
 #qmTray,#qmGrip{display:none}
-html.qm{padding:0!important;height:100%;overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;--qmh:46dvh;--qmg:8px;--qmb:calc(var(--qmg) + env(safe-area-inset-bottom,0px));--qmt:calc(var(--qmg) + env(safe-area-inset-top,0px));--qmhd:54px;--qme:cubic-bezier(.32,.72,0,1);--qmbg:rgba(250,249,246,.94);--qmso:#FAF9F6}
+html.qm{padding:0!important;height:var(--qmvh,100lvh)!important;min-height:var(--qmvh,100lvh);overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;--qmh:calc(var(--qmvh,100lvh) * .46);--qmg:8px;--qmb:calc(var(--qmg) + env(safe-area-inset-bottom,0px));--qmt:calc(var(--qmg) + env(safe-area-inset-top,0px));--qmhd:54px;--qme:cubic-bezier(.32,.72,0,1);--qmbg:rgba(250,249,246,.94);--qmso:#FAF9F6}
 html.qm[data-ui=dark]{--qmbg:rgba(30,30,32,.94);--qmso:#1E1E20}
-html.qm body{height:100dvh;overflow:hidden;background:#000;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;touch-action:manipulation}
-html.qm .app{display:block!important;height:100dvh!important;overflow:hidden!important;background:#000!important}
+html.qm body{position:relative;height:var(--qmvh,100lvh);min-height:var(--qmvh,100lvh);margin:0;overflow:hidden;background:#000;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;touch-action:manipulation}
+html.qm .app{position:relative;display:block!important;height:var(--qmvh,100lvh)!important;overflow:hidden!important;background:#000!important}
 html.qm .top,html.qm #tools,html.qm .ltabs,html.qm #onlyPhone,html.qm #presBar,html.qm .hint{display:none!important}
 html.qm .main{display:block!important;height:100%!important}
-html.qm .stage{position:fixed!important;inset:0!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;background:#000!important;background-image:none!important;overflow:hidden!important;display:block!important}
+html.qm .stage{position:absolute!important;inset:auto!important;left:0!important;top:0!important;width:100%!important;height:var(--qmvh,100lvh)!important;margin:0!important;padding:0!important;background:#000!important;background-image:none!important;overflow:hidden!important;display:block!important}
 html.qm .device{padding:0!important;border-radius:0!important;background:none!important;box-shadow:none!important}
 html.qm .screen{border-radius:0!important}
 html.qm:not(.qm-sa) .screen{border-radius:40px!important}
@@ -7048,14 +7048,14 @@ html.qm:not(.qm-sa) .screen{border-radius:40px!important}
 html.qm.qm-sa .sb,html.qm.qm-sa .homebar{display:none!important}
 
 /* the grip: a thin line on the edge, the only thing added to the screen */
-html.qm #qmGrip{display:block;position:fixed;z-index:79;right:0;top:50%;width:30px;height:96px;margin-top:-48px;padding:0;border:0;background:none;-webkit-appearance:none;appearance:none;transition:opacity .3s ease,transform .46s var(--qme)}
+html.qm #qmGrip{display:block;position:absolute;z-index:79;right:0;top:calc(var(--qmvh,100lvh) / 2);width:30px;height:96px;margin-top:-48px;padding:0;border:0;background:none;-webkit-appearance:none;appearance:none;transition:opacity .3s ease,transform .46s var(--qme)}
 html.qm #qmGrip i{position:absolute;right:5px;top:22px;width:5px;height:52px;border-radius:3px;background:rgba(120,120,128,.62);box-shadow:0 0 0 .5px rgba(255,255,255,.55),0 1px 6px rgba(0,0,0,.18)}
 html.qm #qmGrip:active i{background:rgba(120,120,128,.9)}
 html.qm.qm-open #qmGrip{opacity:0;pointer-events:none;transform:translateX(16px)}
 
 /* the tray */
-html.qm #qmTray{display:block;position:fixed;z-index:80;left:var(--qmg);right:var(--qmg);bottom:var(--qmb);height:var(--qmh);border-radius:30px;background:var(--qmbg);-webkit-backdrop-filter:blur(30px) saturate(1.7);backdrop-filter:blur(30px) saturate(1.7);box-shadow:0 0 0 .5px var(--ln),0 22px 60px rgba(0,0,0,.30),0 2px 8px rgba(0,0,0,.10);transform:translateY(calc(var(--qmh) + 90px));transition:transform .46s var(--qme);direction:rtl;color:var(--fg)}
-html.qm aside.col{position:fixed!important;z-index:81;left:var(--qmg);right:var(--qmg);bottom:var(--qmb);top:auto;width:auto!important;height:calc(var(--qmh) - var(--qmhd))!important;min-height:0!important;margin:0!important;background:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important;border:0!important;border-radius:0 0 30px 30px;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 0 22px!important;transform:translateY(calc(var(--qmh) + 90px));transition:transform .46s var(--qme);display:none}
+html.qm #qmTray{display:block;position:absolute;z-index:80;left:var(--qmg);right:var(--qmg);bottom:var(--qmb);height:var(--qmh);border-radius:30px;background:var(--qmbg);-webkit-backdrop-filter:blur(30px) saturate(1.7);backdrop-filter:blur(30px) saturate(1.7);box-shadow:0 0 0 .5px var(--ln),0 22px 60px rgba(0,0,0,.30),0 2px 8px rgba(0,0,0,.10);transform:translateY(calc(var(--qmh) + 90px));transition:transform .46s var(--qme);direction:rtl;color:var(--fg)}
+html.qm aside.col{position:absolute!important;z-index:81;left:var(--qmg);right:var(--qmg);bottom:var(--qmb);top:auto;width:auto!important;height:calc(var(--qmh) - var(--qmhd))!important;min-height:0!important;margin:0!important;background:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important;border:0!important;border-radius:0 0 30px 30px;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 0 22px!important;transform:translateY(calc(var(--qmh) + 90px));transition:transform .46s var(--qme);display:none}
 html.qm[data-qmv="list"] aside.col.gal,html.qm[data-qmv="fx"] aside.col.gal,html.qm[data-qmv="insp"] aside#insp{display:block}
 html.qm.qm-open #qmTray,html.qm.qm-open aside.col{transform:translateY(var(--qmdy,0px))}
 html.qm.qm-top #qmTray{bottom:auto;top:var(--qmt)}
@@ -7078,6 +7078,8 @@ html.qm.qm-drag #qmTray,html.qm.qm-drag aside.col{transition:none}
 #qmHd #qmBack svg{width:19px;height:19px}
 #qmNote{display:none}
 html.qm:not(.qm-sa)[data-qmv="list"] #qmNote{display:block;margin:18px 22px 0;font-size:12.5px;line-height:1.5;color:var(--m);text-align:center}
+#qmVer{display:none}
+html.qm[data-qmv="list"] #qmVer{display:block;margin:14px 22px 0;font-size:11.5px;color:var(--m);text-align:center;opacity:.8}
 
 /* what is inside the tray, sized for a finger */
 html.qm .col .sec,html.qm .col .grp{padding-inline:6px}
@@ -7134,7 +7136,7 @@ html.qm .tip{display:none!important}
  document.body.appendChild(tray);
  var grip=document.createElement('button'); grip.id='qmGrip'; grip.setAttribute('aria-label','פתח את הסטודיו'); grip.innerHTML='<i></i>'; document.body.appendChild(grip);
  try{ $('qmUndo').innerHTML=$('undo').innerHTML; $('qmRedo').innerHTML=$('redo').innerHTML; }catch(e){}
- var gal=document.querySelector('aside.col.gal'),note=document.createElement('p'); note.id='qmNote'; note.textContent='לגודל אמיתי על כל המסך: כפתור השיתוף, ואז ״הוסף למסך הבית״.'; if(gal)gal.appendChild(note);
+ var gal=document.querySelector('aside.col.gal'),note=document.createElement('p'); note.id='qmNote'; note.textContent='לגודל אמיתי על כל המסך: כפתור השיתוף, ואז ״הוסף למסך הבית״.'; if(gal)gal.appendChild(note); var ver=document.createElement('p'); ver.id='qmVer'; try{ var vm=(document.querySelector('.brand')||document.body).textContent.match(/\d\.\d\d/); ver.textContent='גרסה '+(vm?vm[0]:''); }catch(e){} if(gal)gal.appendChild(ver);
 
  function left(v){ var b=document.querySelector('#leftTabs [data-v="'+v+'"]'); if(b)b.click(); }
  function view(v){ H.setAttribute('data-qmv',v); $('qmBack').hidden=v==='list'; $('qmAdd').hidden=v!=='list'; $('qmTtl').textContent=v==='list'?'על המסך':(v==='fx'?'אפקטים':''); if(v==='list')left('layers'); if(v==='fx')left('fx');
@@ -7164,7 +7166,8 @@ html.qm .tip{display:none!important}
   hd.addEventListener('pointerup',end); hd.addEventListener('pointercancel',end); })();
 
  view('list');
- function settle(){ tool(H.classList.contains('qm-open')?'select':'use'); try{ dispatchEvent(new Event('resize')); }catch(e){} }
+ function settle(){ try{ window.QMH(); }catch(e){} tool(H.classList.contains('qm-open')?'select':'use'); try{ dispatchEvent(new Event('resize')); }catch(e){} }
+ addEventListener('resize',function(){ try{ window.QMH(); }catch(e){} }); addEventListener('pageshow',function(){ setTimeout(settle,60); }); document.addEventListener('visibilitychange',function(){ if(!document.hidden)setTimeout(settle,120); });
  addEventListener('load',function(){ settle(); setTimeout(settle,500); setTimeout(settle,1500); }); setTimeout(settle,300);
  addEventListener('orientationchange',function(){ setTimeout(settle,300); });
  window.QMOPEN=open; window.QMCLOSE=close; window.QMVIEW=view;
