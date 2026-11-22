@@ -730,7 +730,7 @@ html,body{background:var(--cv) fixed!important}
 </style>
 <div class="app" dir="rtl" lang="he">
   <header class="top">
-    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.05</span></div>
+    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.06</span></div>
     <div class="seg" id="modeSeg" role="group" aria-label="מה רואים בטלפון"><button data-v="app" title="האפליקציה של נימר, כמו שהיא">האפליקציה</button><button data-v="canvas" title="רק הרקע, הכדור והבר">רקע וכדור</button></div>
     <div class="seg" id="themeSeg" role="group" aria-label="ערכה"><button data-v="light">יום</button><button data-v="dark">לילה</button></div>
     <div class="seg" id="devSeg" role="group" aria-label="תצוגה"><button data-v="frame">מסגרת</button><button data-v="full">מסך מלא</button></div>
@@ -1086,6 +1086,7 @@ var BARP=[['gl','שקיפות',.05,.9,.01,.45],['gb','טשטוש',0,50,1,24],['g
 var MOTP=[['spd','משך מחזור',8,120,1,40],['am','טווח תזוזה',0,2,.05,1]];
 
 /* ═════════ state ═════════ */
+function PORCELAIN(){ return {type:'linear',angle:180,stops:[{c:'#F6F7F8',p:0},{c:'#F3F4F6',p:50},{c:'#ECEEF1',p:100}],clean:true}; }
 function defaults(){ var s={v:2,theme:'light',dev:'frame',pal:'quantu',ink:'auto',grad:{},orb:{state:'idle',cap:'personal'},motion:false,ovSafe:false,ovGrid:false,sel:'horizon',tab:'color',stop:1,L:{}};
  PALS.forEach(function(p){ s.grad[p.id]={light:{type:p.type||'linear',angle:180,stops:JSON.parse(JSON.stringify(p.light))},dark:{type:p.type||'linear',angle:180,stops:JSON.parse(JSON.stringify(p.dark))}}; });
  LIB.forEach(function(l){ var o={on:l.id==='horizon'||l.id==='grain'}; l.p.forEach(function(q){ o[q[0]]=q[2]==='color'?q[3]:q[2]==='select'?q[4]:q[2]==='toggle'?q[3]:q[5]; }); s.L[l.id]=o; });
@@ -1096,11 +1097,11 @@ function defaults(){ var s={v:2,theme:'light',dev:'frame',pal:'quantu',ink:'auto
  s.orb.state='listen'; s.orb.cap='custom'; s.orb.cols=['#95BADC']; s.orb.ci=0; s.L.reflect.on=true; s.L.reflect.a=1; s.L.reflect.gap=0;
  s.mood={'quantu:light':{x:.719,y:-.497,s:1}};
  /* 7.05 · a background that belongs to one screen in one mode. Roi, 22.11.2026: the Voice screen in light mode is a clean neutral porcelain white, nothing laid over it */
- s.pbg={'voice:light':{type:'linear',angle:180,stops:[{c:'#F6F7F8',p:0},{c:'#F3F4F6',p:50},{c:'#ECEEF1',p:100}],clean:true}};
+ s.pbg={'*:light':PORCELAIN()}; /* 7.06: one background for every screen in a mode: what is designed on one screen is the same on all (Roi, 22.11.2026) */
  return s; }
 var S=defaults();
 try{ var saved=JSON.parse(window.QPRESET||localStorage.getItem('quantu-studio-v3')||'null'); if(saved&&saved.v===2){ var d=defaults(); S=Object.assign(d,saved); LIB.forEach(function(l){ S.L[l.id]=Object.assign(d.L[l.id],saved.L&&saved.L[l.id]||{}); }); } }catch(e){}
-function pbgKey(){ return (typeof curPage==='string'?curPage:'voice')+':'+S.theme; }
+function pbgKey(){ return '*:'+S.theme; }
 function pbgNow(){ return S.pbg&&S.pbg[pbgKey()]||null; }
 function G(){ var o=pbgNow(); if(o)return o; if(S.pal==='custom'&&S.custom)return S.custom[S.theme]; return S.grad[S.pal][S.theme]; }
 function persist(){ if(window.QPRESENT)return; try{ localStorage.setItem('quantu-studio-v3',JSON.stringify(S)); localStorage.setItem('quantu-studio-at',String(Date.now())); }catch(e){} workSave(); }
@@ -2035,7 +2036,8 @@ function ensureState(){ ensureLayers(); ensurePals(); if(S.css)splitBubbleRules(
  for(var k in BD)if(!(k in b))b[k]=BD[k];
  if(!S.orb.dt)S.orb.dt='dbl'; if(S.orb.di==null)S.orb.di=0; if(S.orb.size==null)S.orb.size=196; if(S.orb.y==null)S.orb.y=.46; if(S.orb.wl==null)S.orb.wl=4;
  /* 7.03: the mirror is sharp by default. A saved mirror that still holds the old untouched default follows it; a value somebody chose stays */
- if(!S.mig)S.mig={}; if(!S.mig.d7){ if(S.L.mirror&&S.L.mirror.depth===.6)S.L.mirror.depth=0; S.mig.d7=1; }
+ if(!S.mig)S.mig={}; /* 7.06: a background saved for the Voice screen alone becomes the background of every screen */ if(!S.mig.pb6){ if(S.pbg){ var vb=S.pbg['voice:light']; if(vb&&!S.pbg['*:light'])S.pbg['*:light']=vb; for(var pk in S.pbg)if(pk.charAt(0)!=='*')delete S.pbg[pk]; } S.mig.pb6=1; }
+ if(!S.mig.d7){ if(S.L.mirror&&S.L.mirror.depth===.6)S.L.mirror.depth=0; S.mig.d7=1; }
  S.mine.forEach(function(m){ if(!m.an)m.an=shapeAnim(); if(!m.an.in)m.an.in=shapeAnim().in; if(!m.an.loop)m.an.loop=shapeAnim().loop;
   if(m.type==='text'){ if(m.font==null)m.font=0; if(m.fw==null)m.fw=500; if(m.ls==null)m.ls=-.01; if(m.it==null)m.it=0; }
   if(m.type==='shape')shapeFix(m); }); }
