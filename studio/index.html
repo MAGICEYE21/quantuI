@@ -728,7 +728,7 @@ html,body{background:var(--cv) fixed!important}
 </style>
 <div class="app" dir="rtl" lang="he">
   <header class="top">
-    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.03</span></div>
+    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.04</span></div>
     <div class="seg" id="modeSeg" role="group" aria-label="מה רואים בטלפון"><button data-v="app" title="האפליקציה של נימר, כמו שהיא">האפליקציה</button><button data-v="canvas" title="רק הרקע, הכדור והבר">רקע וכדור</button></div>
     <div class="seg" id="themeSeg" role="group" aria-label="ערכה"><button data-v="light">יום</button><button data-v="dark">לילה</button></div>
     <div class="seg" id="devSeg" role="group" aria-label="תצוגה"><button data-v="frame">מסגרת</button><button data-v="full">מסך מלא</button></div>
@@ -7232,6 +7232,21 @@ html.qm .tip{display:none!important}
  addEventListener('load',function(){ settle(); setTimeout(settle,500); setTimeout(settle,1500); }); setTimeout(settle,300);
  addEventListener('orientationchange',function(){ setTimeout(settle,300); });
  window.QMOPEN=open; window.QMCLOSE=close; window.QMVIEW=view;
+})();
+</script>
+<script>
+/* 7.04 · on the phone a slider changes only when the finger moves sideways. A finger that moves mostly up or down means to scroll the tray: the slider keeps its value, nothing on the screen moves, and the tray scrolls. A touch that hardly moves changes nothing. */
+(function(){ var H=document.documentElement, G=null, PASS=false;
+ function scroller(el){ for(var p=el.parentElement;p&&p!==document.body;p=p.parentElement){ var cs=getComputedStyle(p); if(/(auto|scroll)/.test(cs.overflowY)&&p.scrollHeight>p.clientHeight+1)return p; } return null; }
+ function fire(el,type){ PASS=true; try{ el.dispatchEvent(new Event(type,{bubbles:true})); }finally{ PASS=false; } }
+ document.addEventListener('touchstart',function(e){ G=null; if(!H.classList.contains('qm'))return; var t=e.target; if(!(t&&t.tagName==='INPUT'&&t.type==='range')||e.touches.length!==1)return; var q=e.touches[0]; G={el:t,x:q.clientX,y:q.clientY,ly:q.clientY,v0:t.value,mode:null,sc:scroller(t)}; },{capture:true,passive:true});
+ document.addEventListener('touchmove',function(e){ if(!G)return; var q=e.touches[0]; if(!q)return; var dx=q.clientX-G.x,dy=q.clientY-G.y;
+  if(!G.mode&&Math.hypot(dx,dy)>6){ G.mode=Math.abs(dx)>=Math.abs(dy)*1.2?'h':'v'; if(G.mode==='h'&&G.el.value!==G.v0)fire(G.el,'input'); }
+  if(G.mode!=='h'){ if(G.el.value!==G.v0)G.el.value=G.v0; if(G.mode==='v'){ if(e.cancelable)e.preventDefault(); if(G.sc)G.sc.scrollTop-=q.clientY-G.ly; } }
+  G.ly=q.clientY; },{capture:true,passive:false});
+ function end(){ if(!G)return; var g=G; G=null; if(g.mode!=='h'){ if(g.el.value!==g.v0)g.el.value=g.v0; } }
+ document.addEventListener('touchend',end,true); document.addEventListener('touchcancel',end,true);
+ ['input','change'].forEach(function(ev){ window.addEventListener(ev,function(e){ if(PASS||!G||e.target!==G.el||G.mode==='h')return; e.stopImmediatePropagation(); if(G.el.value!==G.v0)G.el.value=G.v0; },true); });
 })();
 </script>
 </body></html>
