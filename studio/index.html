@@ -252,7 +252,7 @@ input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:v
 input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radius:50%;background:var(--knob);box-shadow:0 .5px 4px rgba(0,0,0,.28),0 0 0 .5px rgba(0,0,0,.1)}
 input[type=range]:focus-visible{outline:none}
 input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--sel),0 .5px 4px rgba(0,0,0,.28)}
-input.hue{direction:ltr;height:14px}
+input.hue{direction:ltr;height:14px}.sv.qfine{box-shadow:0 0 0 2px rgba(255,255,255,.55)}
 input.hue::-webkit-slider-runnable-track{height:10px;border-radius:5px;background:linear-gradient(90deg,red,#ff0,lime,cyan,blue,#f0f,red)}
 input.hue::-webkit-slider-thumb{margin-top:-5px}
 input.hue::-moz-range-track{height:10px;border-radius:5px;background:linear-gradient(90deg,red,#ff0,lime,cyan,blue,#f0f,red)}
@@ -730,7 +730,7 @@ html,body{background:var(--cv) fixed!important}
 </style>
 <div class="app" dir="rtl" lang="he">
   <header class="top">
-    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.30</span></div>
+    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.31</span></div>
     <div class="seg" id="modeSeg" role="group" aria-label="מה רואים בטלפון"><button data-v="app" title="האפליקציה של נימר, כמו שהיא">האפליקציה</button><button data-v="canvas" title="רק הרקע, הכדור והבר">רקע וכדור</button></div>
     <div class="seg" id="themeSeg" role="group" aria-label="ערכה"><button data-v="light">יום</button><button data-v="dark">לילה</button></div>
     <div class="seg" id="devSeg" role="group" aria-label="תצוגה"><button data-v="frame">מסגרת</button><button data-v="full">מסך מלא</button></div>
@@ -1676,10 +1676,12 @@ function renderGBar(){ var g=G(),b=$('gbar'); b.style.background='linear-gradien
  if(S.stop>=g.stops.length)S.stop=0;
  b.innerHTML=g.stops.map(function(s,i){return '<div class="stop'+(i===S.stop?' sel':'')+'" data-i="'+i+'" style="left:'+s.p+'%" role="slider" aria-label="נקודת צבע '+(i+1)+'" aria-valuenow="'+s.p+'" tabindex="0"><i style="background:'+s.c+'"></i></div>'}).join(''); }
 function syncPicker(){ var s=G().stops[S.stop]; if(!s)return; var hsv=r2hsv(h2r(s.c)); picking={h:hsv[0],s:hsv[1],v:hsv[2]}; drawSV(); $('hue').value=Math.round(picking.h); $('hex').value=s.c; $('stopPos').value=s.p; $('stopPosR').value=s.p; $('gAngle').value=G().angle; $('gAngleN').value=G().angle; paintRanges($('stopPosR').parentNode); }
+var QFINE=.25;
 function drawSV(){ $('sv').style.background='linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,'+r2h(hsv2r(picking.h,1,1))+')'; $('svDot').style.left=(picking.s*100)+'%'; $('svDot').style.top=((1-picking.v)*100)+'%'; }
 function setStopColor(hex,live){ var s=editable().stops[S.stop]; s.c=hex.toUpperCase(); $('hex').value=s.c; rebase(); renderColorOnly(); if(live)commitSoon(); else commit(); }
 (function(){ var sv=$('sv'),drag=false; function at(e){ var r=sv.getBoundingClientRect(); picking.s=clamp((e.clientX-r.left)/r.width,0,1); picking.v=clamp(1-(e.clientY-r.top)/r.height,0,1); drawSV(); var s=editable().stops[S.stop]; s.c=r2h(hsv2r(picking.h,picking.s,picking.v)); $('hex').value=s.c; rebase(); renderBase(); renderGBar(); after(); }
- sv.addEventListener('pointerdown',function(e){ drag=true; sv.setPointerCapture(e.pointerId); at(e); }); sv.addEventListener('pointermove',function(e){ if(drag)at(e); }); sv.addEventListener('pointerup',function(){ drag=false; renderColorOnly(); commit(); }); })();
+ var st=null; function put(){ drawSV(); var s=editable().stops[S.stop]; s.c=r2h(hsv2r(picking.h,picking.s,picking.v)); $('hex').value=s.c; rebase(); renderBase(); renderGBar(); after(); }
+ sv.style.touchAction='none'; sv.addEventListener('pointerdown',function(e){ drag=true; sv.setPointerCapture(e.pointerId); st={x:e.clientX,y:e.clientY,s:picking.s,v:picking.v,m:false}; }); sv.addEventListener('pointermove',function(e){ if(!drag||!st)return; var dx=e.clientX-st.x,dy=e.clientY-st.y; if(!st.m&&Math.hypot(dx,dy)<5)return; st.m=true; sv.classList.add('qfine'); var r=sv.getBoundingClientRect(); picking.s=clamp(st.s+dx/r.width*QFINE,0,1); picking.v=clamp(st.v-dy/r.height*QFINE,0,1); put(); }); sv.addEventListener('pointerup',function(e){ if(drag&&st&&!st.m)at(e); drag=false; st=null; sv.classList.remove('qfine'); renderColorOnly(); commit(); }); sv.addEventListener('pointercancel',function(){ drag=false; st=null; sv.classList.remove('qfine'); }); })();
 $('hue').addEventListener('input',function(){ picking.h=+this.value; drawSV(); var s=editable().stops[S.stop]; s.c=r2h(hsv2r(picking.h,picking.s,picking.v)); $('hex').value=s.c; rebase(); renderBase(); renderGBar(); after(); });
 $('hue').addEventListener('change',function(){ renderColorOnly(); commit(); });
 $('hex').addEventListener('input',function(){ if(/^#[0-9a-fA-F]{6}$/.test(this.value)){ setStopColor(this.value,true); } });
@@ -1766,9 +1768,18 @@ $('oDel').addEventListener('click',function(){ var c=oCols(); if(c.length<2)retu
 $('oFlip').addEventListener('click',function(){ var p=oPos(); for(var i=0;i<p.length;i++)p[i]=100-p[i]; S.orb.cap='custom'; renderCaps(); renderBase(); commit(); });
 $('oChips').addEventListener('click',function(e){ var b=e.target.closest('.dot'); if(!b)return; S.orb.ci=+b.dataset.i; renderCaps(); });
 (function(){ var sv=$('osv'),drag=false; function at(e){ var r=sv.getBoundingClientRect(); opick.s=clamp((e.clientX-r.left)/r.width,0,1); opick.v=clamp(1-(e.clientY-r.top)/r.height,0,1); drawOSV(); setOrbCol(r2h(hsv2r(opick.h,opick.s,opick.v))); }
- sv.addEventListener('pointerdown',function(e){ drag=true; sv.setPointerCapture(e.pointerId); at(e); }); sv.addEventListener('pointermove',function(e){ if(drag)at(e); }); sv.addEventListener('pointerup',function(){ drag=false; after(); commit(); }); })();
+ var st=null; sv.style.touchAction='none'; sv.addEventListener('pointerdown',function(e){ drag=true; sv.setPointerCapture(e.pointerId); st={x:e.clientX,y:e.clientY,s:opick.s,v:opick.v,m:false}; }); sv.addEventListener('pointermove',function(e){ if(!drag||!st)return; var dx=e.clientX-st.x,dy=e.clientY-st.y; if(!st.m&&Math.hypot(dx,dy)<5)return; st.m=true; sv.classList.add('qfine'); var r=sv.getBoundingClientRect(); opick.s=clamp(st.s+dx/r.width*QFINE,0,1); opick.v=clamp(st.v-dy/r.height*QFINE,0,1); drawOSV(); setOrbCol(r2h(hsv2r(opick.h,opick.s,opick.v))); }); sv.addEventListener('pointerup',function(e){ if(drag&&st&&!st.m)at(e); drag=false; st=null; sv.classList.remove('qfine'); after(); commit(); }); sv.addEventListener('pointercancel',function(){ drag=false; st=null; sv.classList.remove('qfine'); }); })();
 $('ohue').addEventListener('input',function(){ opick.h=+this.value; drawOSV(); setOrbCol(r2h(hsv2r(opick.h,opick.s,opick.v))); });
 $('ohue').addEventListener('change',function(){ after(); commit(); });
+/* fine hue: a tap jumps, a drag moves the hue a quarter as far as the finger */
+function qFineRange(inp){ if(!inp||inp._qf)return; inp._qf=1; inp.step='0.1'; var w=document.createElement('div'); w.style.cssText='position:relative'; inp.parentNode.insertBefore(w,inp); w.appendChild(inp); var ov=document.createElement('i'); ov.style.cssText='position:absolute;left:0;right:0;top:2px;bottom:-6px;z-index:2;touch-action:none;cursor:pointer;display:block'; w.appendChild(ov);
+ var st=null,mx=+inp.max||360,mn=+inp.min||0; function fire(t){ inp.dispatchEvent(new Event(t,{bubbles:true})); }
+ ov.addEventListener('pointerdown',function(e){ ov.setPointerCapture(e.pointerId); st={x:e.clientX,v:+inp.value,m:false}; e.preventDefault(); });
+ ov.addEventListener('pointermove',function(e){ if(!st)return; var dx=e.clientX-st.x; if(!st.m&&Math.abs(dx)<5)return; st.m=true; var r=inp.getBoundingClientRect(); inp.value=clamp(st.v+dx/r.width*(mx-mn)*QFINE,mn,mx).toFixed(1); fire('input'); });
+ ov.addEventListener('pointerup',function(e){ if(!st)return; if(!st.m){ var r=inp.getBoundingClientRect(); inp.value=clamp(mn+(e.clientX-r.left)/r.width*(mx-mn),mn,mx).toFixed(1); fire('input'); } st=null; fire('change'); });
+ ov.addEventListener('pointercancel',function(){ st=null; }); }
+qFineRange($('hue')); qFineRange($('ohue'));
+
 $('ohex').addEventListener('input',function(){ if(/^#[0-9a-fA-F]{6}$/.test(this.value)){ setOrbCol(this.value); var hsv=r2hsv(h2r(this.value)); opick={h:hsv[0],s:hsv[1],v:hsv[2]}; drawOSV(); $('ohue').value=Math.round(opick.h); commitSoon(); } });
 $('oSave').addEventListener('click',function(){ oCols(); S.myOrb.push({cols:S.orb.cols.slice(),pos:oPos().slice(),ang:S.orb.ang==null?45:S.orb.ang}); renderCaps(); commit(); });
 $('stateSeg').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b)return; S.orb.state=b.dataset.v; segSync('stateSeg',S.orb.state); renderBase(); commit(); });
@@ -7281,4 +7292,4 @@ html.qm .tip{display:none!important}
  ['input','change'].forEach(function(ev){ window.addEventListener(ev,function(e){ if(PASS||!G||e.target!==G.el||G.mode==='h')return; e.stopImmediatePropagation(); if(G.el.value!==G.v0)G.el.value=G.v0; },true); });
 })();
 </script>
-<script id="qm-update">/* the studio on the phone keeps itself current: a small file beside the page names the released version */(function(){try{var V="7.30",h=location.hostname,q0=new URLSearchParams(location.search);if(!/github\.io$/.test(h)&&q0.get("qup")!=="1")return;var busy=0;function chk(){if(busy)return;busy=1;fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){busy=0;t=(t||"").trim();if(!/^\d+\.\d+$/.test(t)||t===V)return;var q=new URLSearchParams(location.search);if(q.get("v")===t){var n=0;try{n=+(sessionStorage.getItem("qmr")||0);sessionStorage.setItem("qmr",String(n+1));}catch(e){}if(n<6)setTimeout(function(){q.set("r",String(Date.now()));location.replace(location.pathname+"?"+q.toString());},9000);return;}q.set("v",t);location.replace(location.pathname+"?"+q.toString());}).catch(function(){busy=0});}chk();setInterval(function(){if(!document.hidden)chk();},30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk();});window.addEventListener("pageshow",function(e){if(e.persisted)chk();});}catch(e){}})();</script></body></html>
+<script id="qm-update">/* the studio on the phone keeps itself current: a small file beside the page names the released version */(function(){try{var V="7.31",h=location.hostname,q0=new URLSearchParams(location.search);if(!/github\.io$/.test(h)&&q0.get("qup")!=="1")return;var busy=0;function chk(){if(busy)return;busy=1;fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){busy=0;t=(t||"").trim();if(!/^\d+\.\d+$/.test(t)||t===V)return;var q=new URLSearchParams(location.search);if(q.get("v")===t){var n=0;try{n=+(sessionStorage.getItem("qmr")||0);sessionStorage.setItem("qmr",String(n+1));}catch(e){}if(n<6)setTimeout(function(){q.set("r",String(Date.now()));location.replace(location.pathname+"?"+q.toString());},9000);return;}q.set("v",t);location.replace(location.pathname+"?"+q.toString());}).catch(function(){busy=0});}chk();setInterval(function(){if(!document.hidden)chk();},30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk();});window.addEventListener("pageshow",function(e){if(e.persisted)chk();});}catch(e){}})();</script></body></html>
