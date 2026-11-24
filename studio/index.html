@@ -730,7 +730,7 @@ html,body{background:var(--cv) fixed!important}
 </style>
 <div class="app" dir="rtl" lang="he">
   <header class="top">
-    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.28</span></div>
+    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.29</span></div>
     <div class="seg" id="modeSeg" role="group" aria-label="מה רואים בטלפון"><button data-v="app" title="האפליקציה של נימר, כמו שהיא">האפליקציה</button><button data-v="canvas" title="רק הרקע, הכדור והבר">רקע וכדור</button></div>
     <div class="seg" id="themeSeg" role="group" aria-label="ערכה"><button data-v="light">יום</button><button data-v="dark">לילה</button></div>
     <div class="seg" id="devSeg" role="group" aria-label="תצוגה"><button data-v="frame">מסגרת</button><button data-v="full">מסך מלא</button></div>
@@ -994,6 +994,19 @@ function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.i
 /* ═════════ palettes people come back to ═════════ */
 var P=function(a){return a.map(function(x){return{c:x[0],p:x[1]}})};
 var PALS=[
+ {id:'n_titan',nu:1,name:'טיטניום',src:'מתכת טבעית, אפור חם עם קו אור באמצע.',light:P([['#A9A6A0',0],['#E4E2DD',50],['#C9C6C0',68],['#B3B0AA',100]]),dark:P([['#1B1A19',0],['#34322F',50],['#1F1E1C',68],['#2A2825',100]])},
+ {id:'n_silver',nu:1,name:'כסף מוברש',src:'אלומיניום קר ונקי, ברק לבן חד.',light:P([['#B7BCC3',0],['#F1F3F5',48],['#D7DBE0',66],['#C3C8CF',100]]),dark:P([['#15171A',0],['#2C3036',48],['#181B1F',66],['#23272C',100]])},
+ {id:'n_cloud',nu:1,name:'ענן',src:'לבן אוורירי, בהשראת צבע השנה של פנטון.',light:P([['#D8D6D1',0],['#F6F5F2',48],['#EAE8E3',66],['#DCDAD5',100]]),dark:P([['#191918',0],['#363532',48],['#1D1D1B',66],['#2A2927',100]])},
+ {id:'n_pearl',nu:1,name:'פנינה',src:'אם הפנינה: ורוד ומנטה כמעט לא נראים, שמתחלפים באור.',light:P([['#CFC6CB',0],['#F6F2EE',46],['#E4E9E6',62],['#D2D4DE',100]]),dark:P([['#1C1A20',0],['#383440',46],['#24272A',62],['#2E2E38',100]])},
+ {id:'n_moon',nu:1,name:'אבן ירח',src:'כחול חלבי, הכי קרוב לקו של הכדור.',light:P([['#9DA7B6',0],['#E6EAF0',50],['#C5CEDA',68],['#AEB8C7',100]]),dark:P([['#10141B',0],['#263043',50],['#141A24',68],['#1E2635',100]])},
+ {id:'n_frost',nu:1,name:'קרח',src:'זכוכית חלבית קפואה, כמעט לבנה.',light:P([['#D2DDE6',0],['#FBFCFD',48],['#E8EEF3',66],['#D9E2EA',100]]),dark:P([['#0C1A22',0],['#1E3441',48],['#0F1E27',66],['#173038',100]])},
+ {id:'n_deepblue',nu:1,name:'כחול עמוק',src:'מתכת כחולה כהה, בהשראת הגימור של האייפון המקצועי.',light:P([['#8C9BB3',0],['#DCE3EE',50],['#B4C1D4',68],['#9CABC2',100]]),dark:P([['#070D1A',0],['#17284A',50],['#0A1222',68],['#122039',100]])},
+ {id:'n_pewter',nu:1,name:'בדיל',src:'אפור־כחול כבד, ברק רך.',light:P([['#8A919A',0],['#CDD2D7',48],['#A9B0B8',66],['#959CA5',100]]),dark:P([['#121518',0],['#2A3036',48],['#15191C',66],['#1F2428',100]])},
+ {id:'n_obsidian',nu:1,name:'אובסידיאן',src:'זכוכית וולקנית שחורה עם ברק כחול. נבנה בשביל התכלת הזוהר בלילה.',light:P([['#7D828C',0],['#C9CDD3',50],['#A1A6AE',68],['#8A9099',100]]),dark:P([['#05070A',0],['#161C26',50],['#07090D',68],['#10141B',100]])},
+ {id:'n_graphite',nu:1,name:'גרפיט',src:'שחור חלל, פס אור צר.',light:P([['#6E7075',0],['#B8BABD',50],['#8E9095',68],['#7A7C81',100]]),dark:P([['#0E0E10',0],['#232326',50],['#111113',68],['#1B1B1E',100]])},
+ {id:'n_celadon',nu:1,name:'סלדון',src:'זיגוג חרסינה ירקרק־קר, בלי אדמה.',light:P([['#B3BEBA',0],['#EEF2EF',50],['#D3DDD9',68],['#BFCAC6',100]]),dark:P([['#0F1615',0],['#24302D',50],['#121A19',68],['#1C2725',100]])},
+ {id:'n_copper',nu:1,name:'נחושת',src:'מתכת חמה. הכחול של הכדור הוא הצבע המשלים שלה.',light:P([['#C8AFA0',0],['#F5ECE6',50],['#E0CBBF',68],['#CDB4A6',100]]),dark:P([['#170F0B',0],['#3A2620',50],['#1C120E',68],['#2A1B15',100]])},
+ {id:'n_lacquer',nu:1,name:'לכה בורדו',src:'לכה עמוקה ומבריקה. הנועזת שבחבורה.',light:P([['#B9A5A8',0],['#EFE7E7',50],['#D4C4C6',68],['#C1AFB2',100]]),dark:P([['#160A0D',0],['#3A1A21',50],['#1C0C10',68],['#2A1218',100]])},
  {id:'quantu',name:'קוונטו',src:'הפלטה שאושרה: לבן ביום, צפחה בלילה.',light:P([['#FFFFFF',0],['#FCFCFD',45],['#F5F5F7',80],['#EFEFF2',100]]),dark:P([['#3B4B6F',0],['#596A95',40],['#8E92A7',70],['#A5A2A8',100]])},
  {id:'apple',name:'מערכת אפל',src:'הרקעים של הגדרות, תמונות ומוזיקה באייפון.',light:P([['#FFFFFF',0],['#F2F2F7',100]]),dark:P([['#1C1C1E',0],['#2C2C2E',60],['#3A3A3C',100]])},
  {id:'graphite',name:'גרפיט רך',src:'האפורים של אפל, בהירים יותר בלילה.',light:P([['#FAFAFC',0],['#F2F2F7',60],['#E5E5EA',100]]),dark:P([['#3A3A3C',0],['#545458',40],['#7C7C80',75],['#98989D',100]])},
@@ -1033,6 +1046,8 @@ var PALS=[
   {id:'f_sienna',type:'field',name:'סיינה ומרווה',src:'בסגנון הכרטיסים: שני גוונים שנפגשים דרך הצבע שבאמצע.',light:P([['#D5B59E',0],['#EFEBE2',50],['#BAC2B4',100]]),dark:P([['#B4754A',0],['#191411',50],['#7C8F78',100]])},
   {id:'f_teal',type:'field',name:'טורקיז ואינדיגו',src:'בסגנון הכרטיסים: שני גוונים שנפגשים דרך הצבע שבאמצע.',light:P([['#94B9B4',0],['#EFEBE2',50],['#9B9EBC',100]]),dark:P([['#2E7C79',0],['#0E1417',50],['#3B4589',100]])}
 ];
+/* 7.29 (Roi, 24.11.2026): every earlier palette leaves the list; they stay in the code only so older looks and the colour field keep working */
+PALS.forEach(function(p){ if(!p.nu)p.hide=1; });
 
 
 /* ═════════ the element library ═════════
@@ -1616,9 +1631,9 @@ $('looks').addEventListener('click',function(e){ var b=e.target.closest('.look')
  S.pal=k.pal; S.theme=k.theme; LIB.forEach(function(l){ if(l.zone==='orb'||l.id==='reflect'||l.id==='field')return; var v=k.L[l.id]; S.L[l.id].on=v!=null; if(v!=null)S.L[l.id].a=v; }); full(); commit(); });
 
 /* ═════════ palette: swatches and a mood pad ═════════ */
-function renderPals(){ ensurePals(); $('pals').innerHTML=PALS.map(function(p){ var g=S.grad[p.id][S.theme]; return '<button class="pal" data-id="'+p.id+'" aria-pressed="'+(S.pal===p.id)+'"><i style="background:'+gradCSS({type:g.type==='field'?'field':'linear',angle:180,stops:g.stops})+'"></i>'+p.name+'</button>'; }).join('')+S.my.map(function(p,i){ return '<button class="pal" data-my="'+i+'" aria-pressed="'+(S.pal==='custom'&&S.myOn===i)+'"><i style="background:'+gradCSS({type:'linear',angle:180,stops:p[S.theme].stops})+'"></i>'+p.name+'</button>'; }).join('');
+function renderPals(){ ensurePals(); $('pals').innerHTML=PALS.filter(function(p){ return !p.hide; }).map(function(p){ var g=S.grad[p.id][S.theme]; return '<button class="pal" data-id="'+p.id+'" aria-pressed="'+(S.pal===p.id)+'"><i style="background:'+gradCSS({type:g.type==='field'?'field':'linear',angle:180,stops:g.stops})+'"></i>'+p.name+'</button>'; }).join('')+S.my.map(function(p,i){ return '<button class="pal" data-my="'+i+'" aria-pressed="'+(S.pal==='custom'&&S.myOn===i)+'"><i style="background:'+gradCSS({type:'linear',angle:180,stops:p[S.theme].stops})+'"></i>'+p.name+'</button>'; }).join('');
  var cur=PALS.filter(function(p){return p.id===S.pal})[0]; $('palSrc').textContent=cur?cur.src:'פלטה שלך.'; $('themeName').textContent=S.theme==='light'?'יום':'לילה'; }
-$('pals').addEventListener('click',function(e){ var b=e.target.closest('.pal'); if(!b)return; /* picking a palette on a screen that has a background of its own gives that screen the palette */ if(pbgNow())delete S.pbg[pbgKey()];
+$('pals').addEventListener('click',function(e){ var b=e.target.closest('.pal'); if(!b)return; /* picking a palette on a screen that has a background of its own gives that screen the palette; the background you designed is kept first, among your palettes */ if(pbgNow()){ try{ var kL=S.pbg['*:light']||S.grad[S.pal]&&S.grad[S.pal].light,kD=S.pbg['*:dark']||S.grad[S.pal]&&S.grad[S.pal].dark,kp={name:'הרקע שלי',light:JSON.parse(JSON.stringify(kL)),dark:JSON.parse(JSON.stringify(kD))},kj=JSON.stringify([kp.light,kp.dark]); S.my=S.my||[]; if(!S.my.some(function(m){ return JSON.stringify([m.light,m.dark])===kj; })){ S.my.unshift(kp); if(b.dataset.my!=null)b.dataset.my=String(+b.dataset.my+1); } }catch(eK){} delete S.pbg[pbgKey()]; }
  if(b.dataset.my!=null){ var p=S.my[+b.dataset.my]; S.custom=JSON.parse(JSON.stringify({light:p.light,dark:p.dark})); S.pal='custom'; S.myOn=+b.dataset.my; S.customId=(S.customId||0)+1; }
  else S.pal=b.dataset.id; S.stop=0; fullColor(); commit(); });
 function moodKey(){ return S.pal+':'+S.theme+(S.pal==='custom'?':'+(S.customId||0):''); }
@@ -7257,4 +7272,4 @@ html.qm .tip{display:none!important}
  ['input','change'].forEach(function(ev){ window.addEventListener(ev,function(e){ if(PASS||!G||e.target!==G.el||G.mode==='h')return; e.stopImmediatePropagation(); if(G.el.value!==G.v0)G.el.value=G.v0; },true); });
 })();
 </script>
-<script id="qm-update">/* the studio on the phone keeps itself current: a small file beside the page names the released version */(function(){try{var V="7.28",h=location.hostname,q0=new URLSearchParams(location.search);if(!/github\.io$/.test(h)&&q0.get("qup")!=="1")return;var busy=0;function chk(){if(busy)return;busy=1;fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){busy=0;t=(t||"").trim();if(!/^\d+\.\d+$/.test(t)||t===V)return;var q=new URLSearchParams(location.search);if(q.get("v")===t){var n=0;try{n=+(sessionStorage.getItem("qmr")||0);sessionStorage.setItem("qmr",String(n+1));}catch(e){}if(n<6)setTimeout(function(){q.set("r",String(Date.now()));location.replace(location.pathname+"?"+q.toString());},9000);return;}q.set("v",t);location.replace(location.pathname+"?"+q.toString());}).catch(function(){busy=0});}chk();setInterval(function(){if(!document.hidden)chk();},30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk();});window.addEventListener("pageshow",function(e){if(e.persisted)chk();});}catch(e){}})();</script></body></html>
+<script id="qm-update">/* the studio on the phone keeps itself current: a small file beside the page names the released version */(function(){try{var V="7.29",h=location.hostname,q0=new URLSearchParams(location.search);if(!/github\.io$/.test(h)&&q0.get("qup")!=="1")return;var busy=0;function chk(){if(busy)return;busy=1;fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){busy=0;t=(t||"").trim();if(!/^\d+\.\d+$/.test(t)||t===V)return;var q=new URLSearchParams(location.search);if(q.get("v")===t){var n=0;try{n=+(sessionStorage.getItem("qmr")||0);sessionStorage.setItem("qmr",String(n+1));}catch(e){}if(n<6)setTimeout(function(){q.set("r",String(Date.now()));location.replace(location.pathname+"?"+q.toString());},9000);return;}q.set("v",t);location.replace(location.pathname+"?"+q.toString());}).catch(function(){busy=0});}chk();setInterval(function(){if(!document.hidden)chk();},30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk();});window.addEventListener("pageshow",function(e){if(e.persisted)chk();});}catch(e){}})();</script></body></html>
