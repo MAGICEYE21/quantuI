@@ -730,7 +730,7 @@ html,body{background:var(--cv) fixed!important}
 </style>
 <div class="app" dir="rtl" lang="he">
   <header class="top">
-    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.29</span></div>
+    <div class="brand"><i aria-hidden="true"></i>סטודיו קוונטו <span style="font-weight:400;color:var(--m);margin-inline-start:6px">7.30</span></div>
     <div class="seg" id="modeSeg" role="group" aria-label="מה רואים בטלפון"><button data-v="app" title="האפליקציה של נימר, כמו שהיא">האפליקציה</button><button data-v="canvas" title="רק הרקע, הכדור והבר">רקע וכדור</button></div>
     <div class="seg" id="themeSeg" role="group" aria-label="ערכה"><button data-v="light">יום</button><button data-v="dark">לילה</button></div>
     <div class="seg" id="devSeg" role="group" aria-label="תצוגה"><button data-v="frame">מסגרת</button><button data-v="full">מסך מלא</button></div>
@@ -806,6 +806,9 @@ html,body{background:var(--cv) fixed!important}
             <div class="btns" style="margin:0 0 10px"><button class="tb" id="palMix">ערבב לי פלטה</button><button class="tb" id="palVar">וריאציה על הנוכחית</button></div>
             <div class="pad" id="pad"><span class="t">בהיר</span><span class="b">עמוק</span><span class="l">קר</span><span class="r">חם</span><i id="padDot"></i></div>
             <div class="row" style="margin-top:6px"><label for="soft">עוצמת צבע</label><input type="range" id="soft" min="0" max="2" step=".01"><button class="tb" id="moodReset">מקורי</button></div>
+            <div class="row" style="margin-top:10px"><label for="tintH">צבע לכל הרקע</label></div>
+            <input type="range" class="hue" id="tintH" min="0" max="360" step="1" value="215" aria-label="צבע לכל הרקע">
+            <div class="row" style="margin-top:6px"><label for="tintA">כמה צבע</label><input type="range" id="tintA" min="0" max="1" step=".01" value="0"></div>
           </div></section>
         <section class="sec" id="blkGrad"><div class="gt"><b>הדרגת הרקע</b><span>נקודה אחרי נקודה</span></div>
           <div class="card">
@@ -1636,28 +1639,34 @@ function renderPals(){ ensurePals(); $('pals').innerHTML=PALS.filter(function(p)
 $('pals').addEventListener('click',function(e){ var b=e.target.closest('.pal'); if(!b)return; /* picking a palette on a screen that has a background of its own gives that screen the palette; the background you designed is kept first, among your palettes */ if(pbgNow()){ try{ var kL=S.pbg['*:light']||S.grad[S.pal]&&S.grad[S.pal].light,kD=S.pbg['*:dark']||S.grad[S.pal]&&S.grad[S.pal].dark,kp={name:'הרקע שלי',light:JSON.parse(JSON.stringify(kL)),dark:JSON.parse(JSON.stringify(kD))},kj=JSON.stringify([kp.light,kp.dark]); S.my=S.my||[]; if(!S.my.some(function(m){ return JSON.stringify([m.light,m.dark])===kj; })){ S.my.unshift(kp); if(b.dataset.my!=null)b.dataset.my=String(+b.dataset.my+1); } }catch(eK){} delete S.pbg[pbgKey()]; }
  if(b.dataset.my!=null){ var p=S.my[+b.dataset.my]; S.custom=JSON.parse(JSON.stringify({light:p.light,dark:p.dark})); S.pal='custom'; S.myOn=+b.dataset.my; S.customId=(S.customId||0)+1; }
  else S.pal=b.dataset.id; S.stop=0; fullColor(); commit(); });
-function moodKey(){ return S.pal+':'+S.theme+(S.pal==='custom'?':'+(S.customId||0):''); }
+function moodKey(){ return (pbgNow()?'pbg:':'')+S.pal+':'+S.theme+(S.pal==='custom'?':'+(S.customId||0):''); }
+function qLin(c){ c/=255; return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4); } function qGam(x){ x=x<=.0031308?12.92*x:1.055*Math.pow(Math.max(x,0),1/2.4)-.055; return Math.round(clamp(x,0,1)*255); }
+function toLab(r){ var R=qLin(r[0]),G2=qLin(r[1]),B=qLin(r[2]),l=Math.cbrt(.4122214708*R+.5363325363*G2+.0514459929*B),m=Math.cbrt(.2119034982*R+.6806995451*G2+.1073969566*B),s2=Math.cbrt(.0883024619*R+.2817188376*G2+.6299787005*B); return [.2104542553*l+.793617785*m-.0040720468*s2,1.9779984951*l-2.428592205*m+.4505937099*s2,.0259040371*l+.7827717662*m-.808675766*s2]; }
+function fromLab(L){ var l=L[0]+.3963377774*L[1]+.2158037573*L[2],m=L[0]-.1055613458*L[1]-.0638541728*L[2],s2=L[0]-.0894841775*L[1]-1.291485548*L[2]; l=l*l*l; m=m*m*m; s2=s2*s2*s2; return [qGam(4.0767416621*l-3.3077115913*m+.2309699292*s2),qGam(-1.2684380046*l+2.6097574011*m-.3413193965*s2),qGam(-.0041960863*l-.7034186147*m+1.707614701*s2)]; }
+/* 7.30 (Roi, 24.11.2026): one hue over the whole background without touching the points one by one; every point keeps its own light, so the structure stays */
+function tintStop(c,h,amt){ if(!amt)return c; var L=toLab(h2r(c)),T=toLab(hsl2r(h,1,.5)),ang=Math.atan2(T[2],T[1]),k=Math.min(1,4*L[0]*(1-L[0])+.15),C=.11*k; return r2h(fromLab([L[0],L[1]*(1-amt)+C*Math.cos(ang)*amt,L[2]*(1-amt)+C*Math.sin(ang)*amt])); }
 function genStops(dark,h0){ var n=4+Math.floor(Math.random()*2),schemes=[[0,18,36,54,72],[0,-20,-45,150,170],[0,30,180,200,215],[0,12,24,-140,-120],[0,40,80,120,150]],sc=schemes[Math.floor(Math.random()*schemes.length)],out=[],sat=dark?.38+Math.random()*.3:.3+Math.random()*.35;
  for(var i=0;i<n;i++){ var t=i/(n-1),h=((h0+sc[i%sc.length])%360+360)%360,l=dark?.06+t*(.5+Math.random()*.12):.97-t*(.2+Math.random()*.1),s=sat*(dark?(.7+t*.5):(.45+t*.7)); out.push({c:r2h(hsl2r(h,clamp(s,0,1),clamp(l,0,1))),p:Math.round(t*100)}); } return out; }
 function setCustom(light,dark){ S.custom={light:{type:'linear',angle:180,stops:light},dark:{type:'linear',angle:180,stops:dark}}; S.pal='custom'; S.myOn=-1; S.customId=(S.customId||0)+1; S.stop=0; fullColor(); commit(); }
 function baseStops(){ if(S.pal==='custom')return null; var p=PALS.filter(function(x){return x.id===S.pal})[0]; return p[S.theme]; }
-function moodBase(){ if(!S.base)S.base={}; var k=moodKey(); return S.base[k]||(S.base[k]=JSON.parse(JSON.stringify(G().stops))); }
+function moodBase(){ if(!S.base)S.base={}; var k=moodKey(); if(!S.mood[k])S.base[k]=JSON.parse(JSON.stringify(G().stops)); return S.base[k]; }
 function rebase(){ if(!S.base)S.base={}; var k=moodKey(); S.base[k]=JSON.parse(JSON.stringify(G().stops)); if(S.mood[k]){ delete S.mood[k]; renderPad(); } }
 function applyMood(){ var b=moodBase(); if(!b)return; var m=S.mood[moodKey()]||{x:0,y:0,s:1};
  G().stops=b.map(function(st){ var hsl=r2hsl(h2r(st.c)), r;
   r=hsl2r(hsl[0],clamp(hsl[1]*m.s,0,1),clamp(hsl[2]+m.y*.16*(m.y>0?(1-hsl[2]):hsl[2])*2,0,1));
   r=mixR(r,m.x>0?[255,176,112]:[127,168,255],Math.abs(m.x)*.22);
-  return {c:r2h(r),p:st.p}; }); }
-function renderPad(){ var m=S.mood[moodKey()]||{x:0,y:0,s:1}, pad=$('pad'), b=moodBase();
+  return {c:tintStop(r2h(r),m.h==null?215:m.h,m.t||0),p:st.p}; }); }
+function renderPad(){ var m=S.mood[moodKey()]||{x:0,y:0,s:1}, pad=$('pad'), b=S.base&&S.mood[moodKey()]?S.base[moodKey()]||null:null; /* showing the pad never freezes a base: the base is taken when a change starts */
  var c=b?b[Math.floor(b.length/2)].c:G().stops[0].c, hs=r2hsl(h2r(c));
  pad.style.background='linear-gradient(to bottom,rgba(255,255,255,.75),rgba(255,255,255,0) 45%,rgba(0,0,0,0) 55%,rgba(0,0,0,.45)),linear-gradient(to right,rgb(127,168,255),'+c+' 50%,rgb(255,176,112))';
- $('padDot').style.left=((m.x+1)/2*100)+'%'; $('padDot').style.top=((1-(m.y+1)/2)*100)+'%'; $('soft').value=m.s; pad.style.opacity=b?1:.4; }
+ $('padDot').style.left=((m.x+1)/2*100)+'%'; $('padDot').style.top=((1-(m.y+1)/2)*100)+'%'; $('soft').value=m.s; var tH=$('tintH'),tA=$('tintA'); if(tH)tH.value=m.h==null?215:m.h; if(tA)tA.value=m.t||0; pad.style.opacity=b?1:.4; }
 (function(){ var pad=$('pad'),drag=false; function at(e){ moodBase(); var r=pad.getBoundingClientRect(),m=S.mood[moodKey()]||(S.mood[moodKey()]={x:0,y:0,s:1}); m.x=+clamp((e.clientX-r.left)/r.width*2-1,-1,1).toFixed(3); m.y=+clamp(1-(e.clientY-r.top)/r.height*2,-1,1).toFixed(3); applyMood(); renderPad(); renderColorOnly(); }
  pad.addEventListener('pointerdown',function(e){ drag=true; pad.setPointerCapture(e.pointerId); at(e); }); pad.addEventListener('pointermove',function(e){ if(drag)at(e); }); pad.addEventListener('pointerup',function(){ drag=false; commit(); }); })();
 $('soft').addEventListener('input',function(){ moodBase(); var m=S.mood[moodKey()]||(S.mood[moodKey()]={x:0,y:0,s:1}); m.s=+this.value; applyMood(); renderPad(); renderColorOnly(); commitSoon(); });
 $('palMix').addEventListener('click',function(){ var h=Math.random()*360; setCustom(genStops(false,h),genStops(true,h)); });
 $('palVar').addEventListener('click',function(){ var cur=G().stops,j=function(st,k){ return st.map(function(s){ var hs=r2hsl(h2r(s.c)); return {c:r2h(hsl2r(((hs[0]+k.h)%360+360)%360,clamp(hs[1]*k.s,0,1),clamp(hs[2]+k.l,0,1))),p:s.p}; }); },k={h:(Math.random()-.5)*58,s:.8+Math.random()*.5,l:(Math.random()-.5)*.08},other=S.theme==='light'?'dark':'light',src=S.pal==='custom'?S.custom:S.grad[S.pal],a=j(cur,k),b=j(src[other].stops,k); setCustom(S.theme==='light'?a:b,S.theme==='light'?b:a); });
-$('moodReset').addEventListener('click',function(){ moodBase(); delete S.mood[moodKey()]; applyMood(); renderPad(); renderColorOnly(); commit(); });
+$('moodReset').addEventListener('click',function(){ var kR=moodKey(); if(S.mood[kR]&&S.base&&S.base[kR])G().stops=JSON.parse(JSON.stringify(S.base[kR])); delete S.mood[kR]; renderPad(); renderColorOnly(); commit(); });
+['tintH','tintA'].forEach(function(id){ $(id).addEventListener('input',function(){ moodBase(); var m=S.mood[moodKey()]||(S.mood[moodKey()]={x:0,y:0,s:1}); if(id==='tintH'){ m.h=+this.value; if(!m.t){ m.t=.5; } } else m.t=+this.value; applyMood(); renderPad(); renderColorOnly(); commitSoon(); }); });
 function renderColorOnly(){ renderBase(); renderMine(); LIB.forEach(function(l){ if(l.canvas||['contours','calendar','map','ripples','grain','horizon'].indexOf(l.id)>=0)renderLayer(l.id); }); renderGBar(); syncPicker(); after(); refreshTiles(); var b=document.querySelector('.pal[aria-pressed=true] i'); if(b)b.style.background=gradCSS({type:'linear',angle:180,stops:G().stops}); }
 
 /* precise gradient editing (folded away) */
@@ -7272,4 +7281,4 @@ html.qm .tip{display:none!important}
  ['input','change'].forEach(function(ev){ window.addEventListener(ev,function(e){ if(PASS||!G||e.target!==G.el||G.mode==='h')return; e.stopImmediatePropagation(); if(G.el.value!==G.v0)G.el.value=G.v0; },true); });
 })();
 </script>
-<script id="qm-update">/* the studio on the phone keeps itself current: a small file beside the page names the released version */(function(){try{var V="7.29",h=location.hostname,q0=new URLSearchParams(location.search);if(!/github\.io$/.test(h)&&q0.get("qup")!=="1")return;var busy=0;function chk(){if(busy)return;busy=1;fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){busy=0;t=(t||"").trim();if(!/^\d+\.\d+$/.test(t)||t===V)return;var q=new URLSearchParams(location.search);if(q.get("v")===t){var n=0;try{n=+(sessionStorage.getItem("qmr")||0);sessionStorage.setItem("qmr",String(n+1));}catch(e){}if(n<6)setTimeout(function(){q.set("r",String(Date.now()));location.replace(location.pathname+"?"+q.toString());},9000);return;}q.set("v",t);location.replace(location.pathname+"?"+q.toString());}).catch(function(){busy=0});}chk();setInterval(function(){if(!document.hidden)chk();},30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk();});window.addEventListener("pageshow",function(e){if(e.persisted)chk();});}catch(e){}})();</script></body></html>
+<script id="qm-update">/* the studio on the phone keeps itself current: a small file beside the page names the released version */(function(){try{var V="7.30",h=location.hostname,q0=new URLSearchParams(location.search);if(!/github\.io$/.test(h)&&q0.get("qup")!=="1")return;var busy=0;function chk(){if(busy)return;busy=1;fetch("version.txt?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.ok?r.text():""}).then(function(t){busy=0;t=(t||"").trim();if(!/^\d+\.\d+$/.test(t)||t===V)return;var q=new URLSearchParams(location.search);if(q.get("v")===t){var n=0;try{n=+(sessionStorage.getItem("qmr")||0);sessionStorage.setItem("qmr",String(n+1));}catch(e){}if(n<6)setTimeout(function(){q.set("r",String(Date.now()));location.replace(location.pathname+"?"+q.toString());},9000);return;}q.set("v",t);location.replace(location.pathname+"?"+q.toString());}).catch(function(){busy=0});}chk();setInterval(function(){if(!document.hidden)chk();},30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)chk();});window.addEventListener("pageshow",function(e){if(e.persisted)chk();});}catch(e){}})();</script></body></html>
