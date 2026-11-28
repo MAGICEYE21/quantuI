@@ -86,7 +86,7 @@ html,body{height:100%;background:#0E0F12;font-family:-apple-system,BlinkMacSyste
  <div class="phone" id="ph">
   <div id="track">
    <div id="fieldWrap"><canvas id="fieldCv" width="216" height="128"></canvas><div id="grain"></div></div>
-   <section class="page voice"><div id="stage"></div><div class="pill"><i></i>Approve flight · ₪412</div><canvas class="orb" id="orbCv"></canvas></section>
+   <section class="page voice"><div class="pill"><i></i>Approve flight · ₪412</div><canvas class="orb" id="orbCv"></canvas></section>
    <section class="page chat">
     <div class="msgs">
      <div class="when">Today 08:12</div>
@@ -117,7 +117,6 @@ html,body{height:100%;background:#0E0F12;font-family:-apple-system,BlinkMacSyste
   <p>Each screen is the natural continuation of the one beside it. Voice is the quiet, bright end. Chat carries more steel. The Bond page is where the slate and the ember come through. Tap the tabs or swipe.</p>
   <div class="map"><canvas id="mapCv" width="216" height="128"></canvas><div class="win" id="win" style="left:0"></div></div>
   <div class="lab"><span>Voice</span><span>Chat</span><span>Home</span></div>
-  <div class="srow"><label>Stage under the orb <span id="stv">100</span></label><input type="range" id="stg" min="0" max="1.6" step=".05" value="1"></div>
   <div class="list" id="list"></div>
  </div>
 </div>
@@ -194,6 +193,7 @@ function bake(cv,p){ const x=cv.getContext('2d'), C=cv.width, R=cv.height, im=x.
      d=Math.sqrt(Math.pow(along/l[3],2)+Math.pow(across/l[4],2)); w=l[6]; }
    else { const dx=(u-l[1])*.46, dy=v-l[2]; d=Math.sqrt(dx*dx+dy*dy)/l[3]; w=l[4]; }
    const m=w*Math.exp(-d*d); col=col.map((q,j)=>q+(o.c[j]-q)*m); }
+  const lu=.299*col[0]+.587*col[1]+.114*col[2]; col=col.map(q=>{ let z=lu+(q-lu)*1.3; z=246-(246-z)*1.12; return Math.max(0,Math.min(255,z)); });
   const q=(r*C+c)*4; im.data[q]=col[0]; im.data[q+1]=col[1]; im.data[q+2]=col[2]; im.data[q+3]=255; }
  x.putImageData(im,0,0); }
 /* the stage under the orb, in Voice only: a fine horizon at its base, a glossy floor in the palette's own tone that deepens toward you,
@@ -205,7 +205,7 @@ function stage(p){ const e=$('stage'); if(!STAGE){ e.style.background='none'; re
   'linear-gradient(180deg,'+w(0)+' '+(y-.22)+'%,'+w(.95)+' '+y+'%,'+w(0)+' '+(y+.22)+'%)',
   'linear-gradient(180deg,'+w(0)+' '+(y-2.6)+'%,'+w(.42)+' '+y+'%,'+w(0)+' '+(y+1.8)+'%)',
   'linear-gradient(180deg,'+c(d,0)+' '+(y-17)+'%,'+c(d,.16)+' '+(y-.4)+'%,'+c(m,0)+' '+y+'%,'+c(m,.10)+' '+(y+.6)+'%,'+c(m,.34)+' 100%)'].join(','); }
-function load(i){ PI=(i+P.length)%P.length; const p=P[PI]; bake($('fieldCv'),p); bake($('mapCv'),p); stage(p); $('grain').style.opacity=p.g; $('nm').textContent=p.n;
+function load(i){ PI=(i+P.length)%P.length; const p=P[PI]; bake($('fieldCv'),p); bake($('mapCv'),p); $('grain').style.opacity=0; $('nm').textContent=p.n;
  [].forEach.call(document.querySelectorAll('.sw'),e=>e.classList.toggle('on',+e.dataset.i===PI)); }
 (function(){ const N=512, n=document.createElement('canvas'); n.width=n.height=N; const x=n.getContext('2d'), im=x.createImageData(N,N);
  for(let i=0;i<im.data.length;i+=4){ const v=128+(Math.random()+Math.random()+Math.random()-1.5)*92|0; im.data[i]=im.data[i+1]=im.data[i+2]=Math.max(0,Math.min(255,v)); im.data[i+3]=255; }
@@ -243,7 +243,6 @@ window.__go=go;
  $('prev').addEventListener('click',()=>load(PI-1)); $('next').addEventListener('click',()=>load(PI+1)); $('nm').addEventListener('click',()=>$('side').classList.toggle('open'));
  load(0); })();
 window.__load=load; window.__stage=v=>{ STAGE=v; stage(P[PI]); };
-$('stg').addEventListener('input',e=>{ STAGE=+e.target.value; $('stv').textContent=Math.round(STAGE*100); stage(P[PI]); });
 })();
 </script>
 </body></html>
