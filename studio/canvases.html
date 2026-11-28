@@ -129,23 +129,28 @@ let W=ph.clientWidth,H=ph.clientHeight, I=0;
 /* the canvases. Each: four bases (top, middle, bottom) at the left edge of Voice, Chat, Home and the far right,
    then soft lights: [colour, u, v, size] with optional [stretch, angle] for the long shafts. u runs 0 to 3 across the three screens. */
 const HX=h=>[parseInt(h.substr(1,2),16),parseInt(h.substr(3,2),16),parseInt(h.substr(5,2),16)];
-const W0=['#FFFFFF',.20,.20,.42,.75], HZ=['#FFFFFF',.50,.58,.55,.32,'hz'];
-/* every canvas keeps the composition you approved: Voice the bright end, Chat the soft continuation, Home where the colour shows.
-   Only the pairs change: one neutral base, one main tone, one deep tone, one mist, and a single accent. */
-const NEU={
+var NEU={
  cool:  [['#F4F6F8','#E6EAEF','#D5DCE5'],['#F1F3F7','#DEE4EC','#C2CEDE'],['#E5E8EE','#CDD4DF','#AAB8CE'],['#DDE1E8','#C4CCD8','#9FAEC6']],
  stone: [['#F6F5F3','#EBE9E6','#DCDBDA'],['#F3F2F0','#E3E1DE','#CDCDCE'],['#EAE8E5','#D6D3D0','#B9B9BC'],['#E4E1DD','#CDC9C5','#AFAFB3']],
  paper: [['#F7F5F2','#EDEAE6','#DFDDDB'],['#F5F3EF','#E6E2DD','#D0CFCF'],['#EEEAE5','#DAD5CF','#BDBCBE'],['#E9E4DE','#D2CCC5','#B3B3B7']],
  grey:  [['#F5F5F6','#E9EAEC','#DADCDF'],['#F2F3F4','#E1E2E5','#CACDD2'],['#E8E9EB','#D2D4D8','#B4B8BF'],['#E2E3E6','#CACCD1','#AAAEB6']],
- pearl: [['#F6F6F8','#ECEDF1','#DEE1E7'],['#F4F4F7','#E6E8EE','#D3D8E1'],['#ECEDF2','#DADDE6','#C1C8D6'],['#E7E8EE','#D3D7E1','#B8C0D0']]};
+ pearl: [['#F6F6F8','#ECEDF1','#DEE1E7'],['#F4F4F7','#E6E8EE','#D3D8E1'],['#ECEDF2','#DADDE6','#C1C8D6'],['#E7E8EE','#D3D7E1','#B8C0D0']],
+ blush: [['#F8F5F5','#EFE8E9','#E2D9DC'],['#F6F2F3','#EAE1E3','#D8CBD0'],['#F0E9EB','#DFD3D7','#C7B8BF'],['#EBE3E6','#D7CACF','#BCABB4']],
+ lilac: [['#F6F5F8','#ECE9F1','#DFDAE7'],['#F4F2F7','#E5E1EE','#D2CBE0'],['#ECE9F2','#DAD4E6','#C0B7D5'],['#E7E3EE','#D2CBE1','#B5AACC']],
+ aqua:  [['#F4F7F8','#E6EEF0','#D4E1E5'],['#F1F6F7','#DEEAED','#C4D8DD'],['#E7EFF1','#CFE0E4','#AFCAD1'],['#E1EBEE','#C6DADF','#A3C2CA']],
+ sage:  [['#F5F7F5','#E9EEEA','#DAE2DC'],['#F2F5F2','#E2E9E3','#CDD8CF'],['#E9EEEA','#D4DED6','#BACBBE'],['#E4EAE5','#CCD8CE','#B0C3B4']],
+ champ: [['#F8F6F2','#EFEAE1','#E3DBCD'],['#F6F3EE','#EAE3D7','#D9CEBC'],['#EFEAE1','#E0D6C5','#CBBDA5'],['#EAE4D9','#D8CCB8','#C0B095']]};
+var W0=['#FFFFFF',.20,.20,.42,.75], HZ=['#FFFFFF',.50,.58,.55,.32,'hz'];
+/* every canvas keeps the approved composition: Voice the bright end, Chat the soft continuation, Home where the colour shows.
+   Only the pairs change: one neutral base, one main tone, one deep tone, one mist, and a single accent. */
 function T(n,f,neu,main,deep,mist,acc,comp,ak){ ak=ak==null?1:ak; comp=comp||'a';
- const L=[W0,HZ,[main,.92,.88,.36,.30],[main,1.08,.82,.42,.34],['#FFFFFF',1.55,.06,.46,.70],[main,1.90,.52,.34,.22],[mist,1.98,.06,.24,.18],['#FFFFFF',1.45,.55,.32,.30],
+ var L=[W0,HZ,[main,.92,.88,.36,.30],[main,1.08,.82,.42,.34],['#FFFFFF',1.55,.06,.46,.70],[main,1.90,.52,.34,.22],[mist,1.98,.06,.24,.18],['#FFFFFF',1.45,.55,.32,.30],
   [deep,2.98,-.02,.50,.62],[main,2.58,.04,.46,.42],[mist,2.12,.06,.30,.32],[main,2.02,.62,.48,.42],['#FFFFFF',2.52,.56,.32,.48],[main,2.80,.82,.44,.40],['#FFFFFF',2.45,.30,.30,.28]];
- if(comp==='a'){ L.push([acc,2.05,.17,.17,.66*ak],[acc,2.80,.42,.19,.56*ak]); }          // at the card edges, as approved
- if(comp==='b'){ L.push([acc,2.20,.96,.34,.50*ak],[acc,1.92,.92,.18,.26*ak]); }          // low, rising from the floor of Home, a breath at Chat's edge
- if(comp==='c'){ L.push([acc,2.10,-.02,.30,.52*ak],[acc,1.96,.04,.16,.30*ak]); }        // high, entering from Chat's top corner
- return {n,f,base:NEU[neu],L,g:.40,main,deep}; }
-const P=[
+ if(comp==='a'){ L.push([acc,2.05,.17,.17,.66*ak],[acc,2.80,.42,.19,.56*ak]); }
+ if(comp==='b'){ L.push([acc,2.20,.96,.34,.50*ak],[acc,1.92,.92,.18,.26*ak]); }
+ if(comp==='c'){ L.push([acc,2.10,-.02,.30,.52*ak],[acc,1.96,.04,.16,.30*ak]); }
+ return {n:n,f:f,base:NEU[neu],L:L,g:.40,main:main,deep:deep}; }
+var P=[
  T('Steel, slate and ember','Steel','cool','#7B90B3','#4E5A88','#9690A0','#D8692F','a'),
  T('Morning steel','Steel','cool','#8FA2C0','#5B6A94','#B3AAB0','#E09060','c',.9),
  T('Iron and ember','Steel','cool','#6C7EA0','#3F4766','#8E8798','#D8692F','a',1.15),
@@ -170,7 +175,7 @@ const P=[
  T('Pearl and champagne','Pearl and ice','pearl','#B9C2CF','#8792A6','#D6CABB','#E2C49C','c'),
  T('Silver and ice','Pearl and ice','pearl','#9DB8D8','#5F84B8','#C5CCD6','#BFDDE6','b'),
  T('Glacier','Pearl and ice','pearl','#A9C6E2','#6A97C8','#CBD5E0','#EEF5FA','c'),
- T('Moonstone','Pearl and ice','pearl','#B5BED3','#7B86A8','#CFC8D3','#EADFD2','b'),
+ T('Moonlight','Pearl and ice','pearl','#B5BED3','#7B86A8','#CFC8D3','#EADFD2','b'),
  T('Fog and lilac','Pearl and ice','pearl','#A3A8C4','#66698F','#B9B2C2','#CDB8D8','c',.9),
  T('Sea salt','Pearl and ice','pearl','#A7BDC6','#6C8C9A','#C9CBC8','#EAD8C4','b'),
 
@@ -179,7 +184,43 @@ const P=[
  T('Concrete and peach','Graphite and metal','grey','#A2A7AE','#6E737C','#BDB4AE','#EDB394','c'),
  T('Atelier','Graphite and metal','stone','#9EA3AA','#5E636B','#C1B6AA','#B86A48','a',.85),
  T('Stone and violet','Graphite and metal','stone','#9A9BB0','#565878','#BCB2AA','#D9B5A0','b'),
- T('Mist and teal','Graphite and metal','grey','#8FAAB5','#4F7280','#B4BCC0','#E0B79A','a',.85)];
+ T('Mist and teal','Graphite and metal','grey','#8FAAB5','#4F7280','#B4BCC0','#E0B79A','a',.85),
+
+ T('Rose quartz','Rose','blush','#C99AA8','#8A5068','#D8C2C8','#FFFFFF','c'),
+ T('Rose and pearl','Rose','blush','#D3A6B2','#9A6478','#E2CFD3','#F2E3D8','b'),
+ T('Blush and slate','Rose','blush','#C7A0AC','#5E6584','#D9C7CB','#F0C6C8','a'),
+ T('Wine and silver','Rose','blush','#B48A9A','#6B3550','#CDBFC6','#E8D6DE','c'),
+ T('Petal','Rose','blush','#E0AFBB','#A86A80','#EBD6DA','#FFFFFF','b'),
+ T('Rose and cobalt','Rose','blush','#C99CAC','#3E5A9E','#DCCBD0','#F4D9DE','a'),
+
+ T('Lilac','Lilac and violet','lilac','#AFA0CC','#6A5A9A','#CFC6DE','#FFFFFF','c'),
+ T('Lavender and pearl','Lilac and violet','lilac','#BBB0D6','#7C6FAE','#D9D2E6','#EADFF2','b'),
+ T('Violet dusk','Lilac and violet','lilac','#9D8DC2','#4E3F86','#C3B8D6','#E8C8DC','a'),
+ T('Iris and silver','Lilac and violet','lilac','#A3A8D4','#5560A8','#C9CCE0','#DCE6F6','c'),
+ T('Plum and mist','Lilac and violet','lilac','#B096B6','#6A4270','#CDBFD0','#EAD3E0','b'),
+ T('Lilac haze','Lilac and violet','lilac','#B8A6D8','#7A62B4','#D6CCE8','#CFE0F2','a'),
+
+ T('Clear sky','Sky and water','aqua','#93B9E2','#3F78C6','#C6D6EA','#FFFFFF','c'),
+ T('Aqua and glass','Sky and water','aqua','#8CC8CC','#2F8A94','#C2DEDF','#E6F6F4','b'),
+ T('Lagoon','Sky and water','aqua','#7FBAC4','#2C6F86','#B9D2D8','#D9EEF2','a'),
+ T('Sky and blush','Sky and water','aqua','#9FC0E2','#4A7CC0','#CAD6E6','#F2CCD2','a'),
+ T('Teal and pearl','Sky and water','aqua','#86B3B8','#3D7480','#C2D2D4','#EEE6DA','c'),
+ T('Ice blue','Sky and water','aqua','#A8CCEA','#5A92CC','#D0DEEC','#EEF6FC','b'),
+
+ T('Sage','Sage','sage','#A4B8A6','#5E7A66','#C8D2C6','#FFFFFF','c'),
+ T('Eucalyptus','Sage','sage','#96B4AC','#4C7268','#C2D0CA','#E4EEE6','b'),
+ T('Olive and stone','Sage','sage','#AEB39A','#6C7254','#CCCDBE','#E8E2CE','a'),
+ T('Mint and silver','Sage','sage','#A6CABF','#5A9484','#CBDAD4','#EAF4F0','c'),
+ T('Moss and pearl','Sage','sage','#9CAE96','#566A52','#C4CCC0','#EDE7DA','b'),
+ T('Sage and lilac','Sage','sage','#A6B6AA','#5E7468','#C9CFC8','#D6C8E2','a'),
+
+ T('Champagne','Champagne and gold','champ','#D4C2A2','#9C845A','#E2D8C6','#FFFFFF','c'),
+ T('Gold leaf','Champagne and gold','champ','#D8BE86','#A07E3C','#E6D9BC','#F6EBCF','a'),
+ T('Honey and pearl','Champagne and gold','champ','#DCC59A','#A88A50','#E8DDCA','#FFF6E4','b'),
+ T('Sand and gold','Champagne and gold','champ','#CDBB9E','#8C7656','#DCD2C2','#E8CC8A','a'),
+ T('Champagne and steel','Champagne and gold','champ','#CDC0A8','#5C6A86','#DCD5C8','#EFE2C6','c'),
+ T('Ivory and bronze','Champagne and gold','champ','#D6C8B0','#8A6A48','#E4DCCD','#C9A273','b')];
+
 let PI=0;
 function bake(cv,p){ const x=cv.getContext('2d'), C=cv.width, R=cv.height, im=x.createImageData(C,R), base=p.base.map(b=>b.map(HX)), LS=p.L.map(l=>({c:HX(l[0]),u:l[1],v:l[2],l}));
  for(let r=0;r<R;r++)for(let c=0;c<C;c++){ const u=c/(C-1)*3, v=r/(R-1);
