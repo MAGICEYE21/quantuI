@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bond · 30 panoramas under three screens</title>
+<style>
+:root{--ink:#16181C;--ink2:#5B606A;--ink3:#8A8F98;--ease:cubic-bezier(.22,.7,.2,1)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#0E0F12;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;color:var(--ink);overflow:hidden}
+.stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;gap:34px}
+.phone{position:relative;width:390px;height:844px;border-radius:54px;overflow:hidden;background:#E3E7ED;box-shadow:0 0 0 10px #1B1C20,0 0 0 11px #2A2C31,0 40px 80px rgba(0,0,0,.55);isolation:isolate;touch-action:pan-y}
+@media (max-width:620px){ .stage{gap:0} .phone{width:100vw;height:100dvh;border-radius:0;box-shadow:none} .side{display:none} }
+
+/* the canvas: three screens wide, one continuous field. The phone is a window that slides over it. */
+#track{position:absolute;top:0;left:0;height:100%;width:300%;transition:transform .7s var(--ease);will-change:transform}
+#track.drag{transition:none}
+#fieldWrap{position:absolute;inset:0;overflow:hidden}
+#panImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .35s}
+#grain{position:absolute;inset:0;opacity:.42;mix-blend-mode:overlay;pointer-events:none;background-size:256px 256px}
+.page{position:absolute;top:0;height:100%;width:33.3333%}
+.page.voice{left:0}.page.chat{left:33.3333%}.page.bond{left:66.6667%}
+
+/* voice */
+.pill{position:absolute;left:16px;top:58px;height:30px;padding:0 12px 0 10px;border-radius:15px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:#2A2D33;background:rgba(255,255,255,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(255,255,255,.6),0 0 0 .5px rgba(30,40,60,.14),0 4px 12px rgba(30,40,60,.06);backdrop-filter:blur(10px) saturate(1.8);-webkit-backdrop-filter:blur(10px) saturate(1.8)}
+.pill i{width:12px;height:12px;border-radius:50%;border:1.4px solid #9AA4B4;border-top-color:#3E68C8}
+.orb{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+
+/* chat */
+.msgs{position:absolute;left:0;right:0;top:110px;padding:0 18px;display:flex;flex-direction:column;gap:16px}
+.bm{align-self:flex-start;max-width:84%;padding:13px 16px;border-radius:22px 22px 22px 8px;font-size:16px;line-height:1.38;letter-spacing:-.01em;color:#1A1D22;
+ background:rgba(255,255,255,.44);backdrop-filter:blur(20px) saturate(1.7);-webkit-backdrop-filter:blur(20px) saturate(1.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 1px rgba(255,255,255,.35),0 10px 26px -18px rgba(30,45,90,.35)}
+.um{align-self:flex-end;max-width:78%;text-align:right;font-size:16px;line-height:1.38;letter-spacing:-.01em;color:#1A1D22;padding:2px 4px}
+.when{align-self:center;font-size:11.5px;color:rgba(30,35,45,.55)}
+.composer{position:absolute;left:14px;right:14px;bottom:96px;height:52px;border-radius:26px;display:flex;align-items:center;gap:10px;padding:0 6px 0 8px;
+ background:rgba(255,255,255,.46);backdrop-filter:blur(20px) saturate(1.7);-webkit-backdrop-filter:blur(20px) saturate(1.7);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(255,255,255,.6),0 0 0 .5px rgba(30,40,60,.12)}
+.composer .pl{width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:300;color:#3A3F47}
+.composer .ph{flex:1;font-size:16px;color:rgba(30,35,45,.5)}
+.composer .tk{width:40px;height:40px;border-radius:20px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(20,30,50,.12)}
+
+/* bond */
+.cards{position:absolute;left:14px;right:14px;top:104px}
+.card{position:relative;border-radius:32px;padding:7px;margin-bottom:14px;background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,.10));
+ backdrop-filter:blur(24px) saturate(1.7);-webkit-backdrop-filter:blur(24px) saturate(1.7);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.9),inset 0 0 0 1px rgba(255,255,255,.4),inset 0 -1px 0 rgba(40,60,110,.10),0 1px 2px rgba(20,30,60,.05),0 22px 44px -26px rgba(30,50,110,.35)}
+.sheet{border-radius:25px;background:rgba(252,253,255,.86);padding:18px 18px 16px;box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(10,20,40,.05)}
+.eb{font-size:13px;color:var(--ink2)}.h1{font-size:30px;font-weight:400;letter-spacing:-.04em;line-height:1.08;margin-top:10px}.p{font-size:15px;color:var(--ink2);line-height:1.35;margin-top:9px}
+.acts{display:flex;align-items:center;gap:22px;padding:12px 8px 6px}.bt{height:40px;padding:0 20px;border-radius:20px;background:#121418;color:#fff;font-size:15px;font-weight:500;border:0}.nn{font-size:15px;color:#3E434C}
+.tr{display:flex;align-items:center;gap:14px}.mini{width:46px;height:46px;flex:none}.tt{font-size:16px;font-weight:600}.ts{font-size:13px;color:var(--ink2);margin-top:2px}
+.tm{margin-left:auto;text-align:right}.tm b{display:block;font-size:22px;font-weight:400;letter-spacing:-.02em}.tm span{font-size:12px;color:var(--ink2)}
+.week{display:flex;gap:6px;padding:8px 1px 2px}.d{flex:1;height:62px;border-radius:20px;background:rgba(252,253,255,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:19px;letter-spacing:-.02em}
+.d small{font-size:9.5px;color:var(--ink3);margin-bottom:2px}.d.on{background:#121418;color:#fff}
+.foot{display:flex;justify-content:space-between;align-items:baseline;padding:10px 12px 6px;font-size:12.5px;color:#3E434C}.foot b{font-size:19px;font-weight:400;color:var(--ink)}
+.plus{position:absolute;left:50%;margin-left:-24px;top:612px;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:300;color:#222;
+ background:rgba(255,255,255,.38);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 0 1px rgba(255,255,255,.4),0 6px 16px rgba(30,40,70,.08)}
+
+/* the bar stays still while the canvas moves under it */
+.bar{position:absolute;left:0;right:0;bottom:30px;display:flex;justify-content:center;gap:10px;z-index:5}
+.call,.tabs{height:50px;border-radius:25px;background:rgba(255,255,255,.42);backdrop-filter:blur(18px) saturate(1.8);-webkit-backdrop-filter:blur(18px) saturate(1.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(255,255,255,.6),0 0 0 .5px rgba(30,40,60,.12),0 6px 18px rgba(30,40,60,.06)}
+.call{width:50px;display:flex;align-items:center;justify-content:center}
+.tabs{position:relative;display:flex;padding:4px;gap:2px}
+.tab{position:relative;z-index:1;height:42px;width:78px;border-radius:21px;border:0;background:transparent;font-size:15px;color:#5D636D;font-family:inherit;transition:color .4s;cursor:pointer}
+.tab.on{color:#16181C}
+.knob{position:absolute;top:4px;left:4px;width:78px;height:42px;border-radius:21px;background:rgba(255,255,255,.86);box-shadow:0 1px 3px rgba(20,30,50,.08);transition:transform .7s var(--ease)}
+
+/* beside the phone: the whole canvas, and the window moving on it */
+.side{width:300px;color:#C9CDD4;font-size:13px}
+.side h2{font-size:15px;font-weight:600;color:#fff;margin-bottom:6px}
+.side p{color:#8C919A;line-height:1.5;margin-bottom:16px}
+.map{position:relative;width:300px;height:216px;border-radius:14px;overflow:hidden;box-shadow:0 0 0 1px #2A2C31}
+.map img{width:100%;height:100%;display:block;object-fit:cover}
+.win{position:absolute;top:0;height:100%;width:33.333%;border-radius:12px;box-shadow:0 0 0 2px #fff,0 0 0 2000px rgba(14,15,18,.38);transition:left .7s var(--ease)}
+.lab{display:flex;justify-content:space-between;margin-top:8px;color:#8C919A;font-size:12px}.lab span{width:33.3%;text-align:center}
+.side{max-height:860px;display:flex;flex-direction:column}
+.list{margin-top:16px;overflow:auto;flex:1;padding-right:6px}
+.fam{font-size:11.5px;color:#8C919A;margin:14px 0 6px}
+.sw{display:flex;align-items:center;gap:10px;width:100%;padding:5px;border-radius:10px;border:0;background:transparent;color:#C9CDD4;font:inherit;font-size:13px;cursor:pointer;text-align:left}
+.sw img{width:108px;height:52px;border-radius:6px;object-fit:cover;flex:none}
+.sw:hover{background:#17181C}.sw.on{background:#22242A;color:#fff}
+.chip{position:absolute;left:50%;transform:translateX(-50%);bottom:92px;z-index:6;display:none;align-items:center;gap:4px;height:34px;padding:0 4px;border-radius:17px;background:rgba(255,255,255,.5);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 .5px rgba(30,40,60,.12);font-size:12.5px;color:#2A2D33;white-space:nowrap}
+.chip button{width:28px;height:28px;border:0;border-radius:14px;background:transparent;font-size:18px;color:#2A2D33}
+@media (max-width:620px){ .side:not(.open){display:none!important} .chip{display:flex} .phone .composer{bottom:136px} .side.open{display:flex;position:fixed;left:8px;right:8px;bottom:8px;top:30%;width:auto;z-index:30;background:rgba(18,19,23,.96);border-radius:22px;padding:16px;max-height:none} .side.open .map,.side.open .lab,.side.open p{display:none} }
+</style></head>
+<body>
+<div class="stage">
+ <div class="phone" id="ph">
+  <div id="track">
+   <div id="fieldWrap"><img id="panImg" alt=""><div id="grain"></div></div>
+   <section class="page voice"><div class="pill"><i></i>Approve flight · ₪412</div><canvas class="orb" id="orbCv"></canvas></section>
+   <section class="page chat">
+    <div class="msgs">
+     <div class="when">Today 08:12</div>
+     <div class="bm">Morning. The Athens flight dropped to ₪412. Want me to book it?</div>
+     <div class="um">Yes, a window seat please.</div>
+     <div class="bm">Done. Seat 14A on Thursday at 07:40. The ticket is in your Documents.</div>
+     <div class="um">Perfect. And move my standup?</div>
+     <div class="bm">Moved to 10:00. I told the team.</div>
+    </div>
+    <div class="composer"><div class="pl">+</div><div class="ph">Ask Bond</div><div class="tk"><svg width="18" height="18" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3" fill="#2F6AC8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" stroke="#2F6AC8" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg></div></div>
+   </section>
+   <section class="page bond">
+    <div class="cards">
+     <div class="card"><div class="sheet"><div class="eb">Bond can take this off you</div><div class="h1">Your work mail.</div><div class="p">Connect Outlook and Bond handles work mail as well.</div></div><div class="acts"><button class="bt">Connect Outlook</button><span class="nn">Not now</span></div></div>
+     <div class="card"><div class="sheet" style="padding:14px 16px"><div class="tr"><canvas class="mini" id="miniCv" width="92" height="92"></canvas><div><div class="tt">Today</div><div class="ts">Standup, 10:00</div></div><div class="tm"><b>10:00</b><span>in 1 h 20</span></div></div></div>
+      <div class="week"><div class="d on">22</div><div class="d"><small>M</small>23</div><div class="d"><small>T</small>24</div><div class="d"><small>W</small>25</div><div class="d"><small>T</small>26</div><div class="d"><small>F</small>27</div><div class="d"><small>S</small>28</div></div>
+      <div class="foot"><span>Bond gave you back this week</span><span><b>4:35</b> hours</span></div></div>
+    </div>
+    <div class="plus">+</div>
+   </section>
+  </div>
+  <div class="chip"><button id="prev" aria-label="Previous">‹</button><span id="nm"></span><button id="next" aria-label="Next">›</button></div>
+  <div class="bar"><div class="call"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#2F6AC8" d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg></div>
+   <div class="tabs"><div class="knob" id="knob"></div><button class="tab on" data-i="0">Voice</button><button class="tab" data-i="1">Chat</button><button class="tab" data-i="2">Home</button></div></div>
+ </div>
+ <div class="side" id="side">
+  <h2>30 panoramas under three screens</h2>
+  <p>Each one is a single quiet landscape: sky, a horizon at the orb's base, water below. The phone turns along it. Voice and Home hold the depth, Chat sits in the lighter haze so reading stays easy. Tap the tabs or swipe.</p>
+  <div class="map"><img id="mapImg" alt=""><div class="win" id="win" style="left:0"></div></div>
+  <div class="lab"><span>Voice</span><span>Chat</span><span>Home</span></div>
+  <div class="list" id="list"></div>
+ </div>
+</div>
+<script>
+(function(){
+const $=id=>document.getElementById(id), ph=$('ph'), track=$('track');
+const DPR=Math.min(window.devicePixelRatio||1,3);
+let W=ph.clientWidth,H=ph.clientHeight, I=0;
+
+/* the panoramas: each one a quiet landscape rendered as an image, running under Voice, Chat and Home */
+const P=[{"n": "Paper and steel", "f": "Paper and steel", "img": "pan/p00.jpg", "th": "pan/t00.jpg", "g": 0.4}, {"n": "Paper and steel, morning", "f": "Paper and steel", "img": "pan/p01.jpg", "th": "pan/t01.jpg", "g": 0.4}, {"n": "Sand and slate, dusk", "f": "Paper and steel", "img": "pan/p02.jpg", "th": "pan/t02.jpg", "g": 0.4}, {"n": "Paper, steel and ember", "f": "Paper and steel", "img": "pan/p03.jpg", "th": "pan/t03.jpg", "g": 0.4}, {"n": "Linen and harbour", "f": "Paper and steel", "img": "pan/p04.jpg", "th": "pan/t04.jpg", "g": 0.4}, {"n": "Sea glass", "f": "Sea glass", "img": "pan/p05.jpg", "th": "pan/t05.jpg", "g": 0.4}, {"n": "Lagoon morning", "f": "Sea glass", "img": "pan/p06.jpg", "th": "pan/t06.jpg", "g": 0.4}, {"n": "Ice harbour", "f": "Sea glass", "img": "pan/p07.jpg", "th": "pan/t07.jpg", "g": 0.4}, {"n": "Sea glass and pearl", "f": "Sea glass", "img": "pan/p08.jpg", "th": "pan/t08.jpg", "g": 0.4}, {"n": "Pearl horizon", "f": "Pearl horizon", "img": "pan/p09.jpg", "th": "pan/t09.jpg", "g": 0.4}, {"n": "Pearl, warm", "f": "Pearl horizon", "img": "pan/p10.jpg", "th": "pan/t10.jpg", "g": 0.4}, {"n": "Graphite horizon", "f": "Pearl horizon", "img": "pan/p11.jpg", "th": "pan/t11.jpg", "g": 0.4}, {"n": "Pearl and blue", "f": "Pearl horizon", "img": "pan/p12.jpg", "th": "pan/t12.jpg", "g": 0.4}, {"n": "Silver daylight", "f": "Pearl horizon", "img": "pan/p13.jpg", "th": "pan/t13.jpg", "g": 0.4}, {"n": "First light", "f": "First light", "img": "pan/p14.jpg", "th": "pan/t14.jpg", "g": 0.4}, {"n": "Blue hour", "f": "First light", "img": "pan/p15.jpg", "th": "pan/t15.jpg", "g": 0.4}, {"n": "Peach morning", "f": "First light", "img": "pan/p16.jpg", "th": "pan/t16.jpg", "g": 0.4}, {"n": "Rose dawn", "f": "First light", "img": "pan/p17.jpg", "th": "pan/t17.jpg", "g": 0.4}, {"n": "Ember horizon", "f": "Ember horizon", "img": "pan/p18.jpg", "th": "pan/t18.jpg", "g": 0.4}, {"n": "Copper and cobalt", "f": "Ember horizon", "img": "pan/p19.jpg", "th": "pan/t19.jpg", "g": 0.4}, {"n": "Ember and smoke", "f": "Ember horizon", "img": "pan/p20.jpg", "th": "pan/t20.jpg", "g": 0.5}, {"n": "Rust and steel", "f": "Ember horizon", "img": "pan/p21.jpg", "th": "pan/t21.jpg", "g": 0.4}, {"n": "Architect", "f": "Architect light", "img": "pan/p22.jpg", "th": "pan/t22.jpg", "g": 0.4}, {"n": "Architect, dawn", "f": "Architect light", "img": "pan/p23.jpg", "th": "pan/t23.jpg", "g": 0.4}, {"n": "Architect, blue", "f": "Architect light", "img": "pan/p24.jpg", "th": "pan/t24.jpg", "g": 0.4}, {"n": "Architect, silver", "f": "Architect light", "img": "pan/p25.jpg", "th": "pan/t25.jpg", "g": 0.4}, {"n": "Parcel steel", "f": "Parcel steel", "img": "pan/p26.jpg", "th": "pan/t26.jpg", "g": 0.55}, {"n": "Steel mist, light", "f": "Parcel steel", "img": "pan/p27.jpg", "th": "pan/t27.jpg", "g": 0.5}, {"n": "Slate and fog", "f": "Parcel steel", "img": "pan/p28.jpg", "th": "pan/t28.jpg", "g": 0.55}, {"n": "Steel and paper", "f": "Parcel steel", "img": "pan/p29.jpg", "th": "pan/t29.jpg", "g": 0.55}];
+let PI=0;
+function load(i){ PI=(i+P.length)%P.length; const p=P[PI], im=$('panImg'); im.src=p.img; $('mapImg').src=p.img; $('grain').style.opacity=p.g; $('nm').textContent=p.n;
+ [].forEach.call(document.querySelectorAll('.sw'),e=>e.classList.toggle('on',+e.dataset.i===PI)); }
+(function(){ const N=512, n=document.createElement('canvas'); n.width=n.height=N; const x=n.getContext('2d'), im=x.createImageData(N,N);
+ for(let i=0;i<im.data.length;i+=4){ const v=128+(Math.random()+Math.random()+Math.random()-1.5)*92|0; im.data[i]=im.data[i+1]=im.data[i+2]=Math.max(0,Math.min(255,v)); im.data[i+3]=255; }
+ x.putImageData(im,0,0); $('grain').style.backgroundImage='url('+n.toDataURL()+')'; })();
+
+/* the orb and its mirror */
+const oc=$('orbCv'), ox=oc.getContext('2d'), ORB_R=58;
+function rings(ctx,cx,cy,r,t,alpha,lw){ const cols=['#1F4FB8','#3E78E0','#7FA6EC','#2C5FC8','#5A8BE6','#A9C2F0'];
+ for(let i=0;i<6;i++){ const p=t*.00035*(1+i*.13)+i*1.7, rx=r*(1+.03*Math.sin(p)), ry=r*(1+.03*Math.cos(p*1.3)), rot=.3*Math.sin(p*.7)+i*.5;
+  ctx.beginPath(); ctx.ellipse(cx+Math.sin(p)*1.2,cy+Math.cos(p*.9)*1.2,rx,ry,rot,0,Math.PI*2); ctx.strokeStyle=cols[i]; ctx.globalAlpha=alpha*(i<2?.95:.55); ctx.lineWidth=lw*(i<2?1.25:.8); ctx.stroke(); } ctx.globalAlpha=1; }
+function drawOrb(t){ ox.setTransform(DPR,0,0,DPR,0,0); ox.clearRect(0,0,W,H); const cx=W/2, cy=H*.34; rings(ox,cx,cy,ORB_R,t,1,1.15);
+ const top=cy+ORB_R+H*.035; ox.save(); ox.beginPath(); ox.rect(0,top,W,ORB_R*2.2); ox.clip(); ox.translate(0,top); ox.scale(1,-.58); ox.translate(0,-(cy+ORB_R)); rings(ox,cx,cy,ORB_R,t,.42,1); ox.restore();
+ ox.save(); ox.globalCompositeOperation='destination-out'; const g=ox.createLinearGradient(0,top,0,top+ORB_R*1.25); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,1)'); ox.fillStyle=g; ox.fillRect(0,top,W,ORB_R*2.4); ox.restore(); }
+const mc=$('miniCv'), mx=mc.getContext('2d');
+function frame(t){ drawOrb(t); mx.setTransform(2,0,0,2,0,0); mx.clearRect(0,0,46,46); rings(mx,23,23,17,t,1,.8); requestAnimationFrame(frame); }
+
+/* moving the window over the canvas */
+const tabs=[].slice.call(document.querySelectorAll('.tab'));
+function go(i,drag){ I=Math.max(0,Math.min(2,i)); track.style.transform='translate3d('+(-I*W)+'px,0,0)'; $('knob').style.transform='translateX('+(I*80)+'px)';
+ tabs.forEach((b,k)=>b.classList.toggle('on',k===I)); $('win').style.left=(I*33.333)+'%'; }
+tabs.forEach(b=>b.addEventListener('click',()=>go(+b.dataset.i)));
+let sx=null, sy=null, dx=0, horiz=null;
+ph.addEventListener('pointerdown',e=>{ if(e.target.closest('.bar'))return; sx=e.clientX; sy=e.clientY; dx=0; horiz=null; });
+window.addEventListener('pointermove',e=>{ if(sx==null)return; const ddx=e.clientX-sx, ddy=e.clientY-sy; if(horiz==null&&Math.abs(ddx)+Math.abs(ddy)>8)horiz=Math.abs(ddx)>Math.abs(ddy);
+ if(!horiz)return; dx=ddx; let off=-I*W+dx; if(off>0)off*=.3; if(off<-2*W)off=-2*W+(off+2*W)*.3; track.classList.add('drag'); track.style.transform='translate3d('+off+'px,0,0)'; $('win').style.left=(Math.max(0,Math.min(2,-off/W))*33.333)+'%'; });
+window.addEventListener('pointerup',()=>{ if(sx==null)return; track.classList.remove('drag'); if(horiz&&Math.abs(dx)>W*.18)go(I+(dx<0?1:-1)); else go(I); sx=null; });
+
+function size(){ W=ph.clientWidth; H=ph.clientHeight; oc.width=W*DPR; oc.height=H*DPR; oc.style.width=W+'px'; oc.style.height=H+'px'; go(I); }
+window.addEventListener('resize',size); size(); requestAnimationFrame(frame);
+window.__go=go;
+// the swatches: one strip per canvas, grouped by family
+(function(){ const box=$('list'); let fam=null, h='';
+ P.forEach((p,i)=>{ if(p.f!==fam){ fam=p.f; h+='<div class="fam">'+fam+'</div>'; } h+='<button class="sw" data-i="'+i+'"><img loading="lazy" src="'+p.th+'" alt=""><span>'+p.n+'</span></button>'; });
+ box.innerHTML=h; [].forEach.call(box.querySelectorAll('.sw'),e=>{ e.addEventListener('click',()=>{ load(+e.dataset.i); $('side').classList.remove('open'); }); });
+ $('prev').addEventListener('click',()=>load(PI-1)); $('next').addEventListener('click',()=>load(PI+1)); $('nm').addEventListener('click',()=>$('side').classList.toggle('open'));
+ load(0); })();
+window.__load=load;
+})();
+</script>
+</body></html>
